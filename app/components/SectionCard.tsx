@@ -4,6 +4,7 @@ import { Section } from '../utils/supabase';
 import { SectionPills } from './SectionPills';
 import { ExpandableTableOfContents } from './ExpandableTableOfContents';
 import Image from 'next/image';
+import { processTextArray } from '../utils/formatText';
 
 interface SectionCardProps {
   section: Section;
@@ -34,9 +35,7 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 		>
 			{/* Top section with image, title, and short summary */}
 			<div
-				className={`flex w-full ${
-					isExpanded ? "p-4 pb-2" : ""
-				}`}
+				className={`flex w-full ${isExpanded ? "p-4 pb-2" : ""}`}
 				onClick={() => setIsExpanded(!isExpanded)}
 				style={{ cursor: "pointer" }}
 			>
@@ -49,10 +48,10 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 					{section.imageUrl ? (
 						<Image
 							src={section.imageUrl}
-							alt={section.heading.join(" ")}
+							alt={processTextArray(section.heading)}
 							width={96}
 							height={96}
-							className={`object-cover w-full h-full ${
+							className={`object-cover w-full h-full saturate-75 ${
 								isExpanded ? "rounded-md" : ""
 							}`}
 						/>
@@ -70,11 +69,11 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 							navigateToSection(section);
 						}}
 					>
-						{section.heading.join(" ")}
+						{processTextArray(section.heading)}
 					</h3>
 					{section.summary && section.summary.length > 0 && (
 						<p className="text-sm text-gray-600 break-words">
-							{section.summary.join(" ")}
+							{processTextArray(section.summary)}
 						</p>
 					)}
 				</div>
@@ -97,16 +96,7 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 									</p>
 								)}
 
-							{section.directContent &&
-								section.directContent.length > 0 && (
-									<div className="text-gray-700 mt-2 mb-3 prose break-words">
-										{section.directContent.map(
-											(content, index) => (
-												<p key={index}>{content}</p>
-											)
-										)}
-									</div>
-								)}
+							{/* Direct content will be implemented later */}
 
 							{/* Horizontal scrolling section pills */}
 							{hasChildSections && childSections.length > 0 && (
@@ -117,7 +107,7 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 									/> */}
 
 									{/* Toggle button for expanded TOC */}
-									{childSections.length > 0 && (
+									{/* {childSections.length > 0 && (
 										<button
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent triggering the card's onClick
@@ -141,7 +131,7 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 												</>
 											)}
 										</button>
-									)}
+									)} */}
 
 									{/* Expanded Table of Contents (conditional) */}
 									<ExpandableTableOfContents

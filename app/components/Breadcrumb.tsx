@@ -1,5 +1,6 @@
 import React from 'react';
 import { Section } from '../utils/supabase';
+import { cleanMarkdown } from '../utils/formatText';
 
 interface BreadcrumbItem {
   id: string;
@@ -14,7 +15,7 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ path, onNavigate }: BreadcrumbProps) {
   return (
-    <nav className="mb-6 overflow-x-auto w-full">
+    <nav className="mb-12 overflow-x-auto w-full">
       <ol className="flex items-center space-x-2 text-sm min-w-max">
         {path.map((item, index) => (
           <li key={item.id} className="flex items-center whitespace-nowrap">
@@ -27,7 +28,7 @@ export function Breadcrumb({ path, onNavigate }: BreadcrumbProps) {
                   : "text-gray-600 hover:text-blue-600"
               }`}
             >
-              {item.label}
+              {cleanMarkdown(item.label)}
             </button>
           </li>
         ))}
