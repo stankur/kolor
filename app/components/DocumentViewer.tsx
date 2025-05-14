@@ -1,11 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Document, Section, getMockDocument } from "../utils/supabase";
+import {
+	Document,
+	Section,
+	getMockDocument,
+} from "../utils/supabase";
 import { Breadcrumb } from "./Breadcrumb";
 import { SectionCard } from "./SectionCard";
 import { DocumentSummary } from "./DocumentSummary";
-import { cleanMarkdown, processTextArray } from "../utils/formatText";
+import { processTextArray } from "../utils/formatText";
 
 interface BreadcrumbItem {
 	id: string;
@@ -43,7 +47,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				]);
 
 				// Set the top-level sections as current
-				setCurrentSections(doc.children as Section[]);
+				setCurrentSections(doc.children);
 			}
 
 			setLoading(false);
@@ -73,9 +77,11 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 		if (
 			Array.isArray(section.children) &&
 			section.children.length > 0 &&
-			typeof section.children[0] !== "string"
+			 section.children.some((child) => Array.isArray(child))
 		) {
-			setCurrentSections(section.children as Section[]);
+			setCurrentSections(
+				section.children.filter((child) => Array.isArray(child)).flat()
+			);
 		} else {
 			setCurrentSections([]);
 		}
@@ -110,7 +116,11 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				section.children.length > 0 &&
 				typeof section.children[0] !== "string"
 			) {
-				setCurrentSections(section.children as Section[]);
+				setCurrentSections(
+					section.children
+						.filter((child) => Array.isArray(child))
+						.flat()
+				);
 			} else {
 				setCurrentSections([]);
 			}
@@ -172,24 +182,32 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						</h1>
 
 						{activePath[activePath.length - 1].section?.summary &&
-							activePath[activePath.length - 1].section.summary
-								.length > 0 && (
+							(
+								activePath[activePath.length - 1]
+									.section as Section
+							).summary.length > 0 && (
 								<p className="text-gray-600 mb-4">
 									{
-										activePath[activePath.length - 1]
-											.section.summary
+										(
+											activePath[activePath.length - 1]
+												.section as Section
+										).summary
 									}
 								</p>
 							)}
 
 						{activePath[activePath.length - 1].section
 							?.longSummary &&
-							activePath[activePath.length - 1].section
-								.longSummary.length > 0 && (
+							(
+								activePath[activePath.length - 1]
+									.section as Section
+							).longSummary.length > 0 && (
 								<DocumentSummary
 									content={
-										activePath[activePath.length - 1]
-											.section.longSummary
+										(
+											activePath[activePath.length - 1]
+												.section as Section
+										).longSummary
 									}
 									onViewOriginal={() =>
 										alert(
@@ -207,7 +225,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				)}
 
 				{/* Section cards */}
-				{currentSections.map((section, index) => (
+				{currentSections.map((section) => (
 					<SectionCard
 						key={section.heading.join("")}
 						section={section}

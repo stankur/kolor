@@ -39,13 +39,12 @@ export function DocumentSummary({ content, onViewOriginal }: DocumentSummaryProp
 				)}
 			</AnimatePresence>
 
-			<div className="flex gap-3 mt-2">
+			<div className="flex justify-end gap-3 mt-2">
 				<button
 					onClick={() => setIsExpanded(!isExpanded)}
 					className="flex items-center gap-2 h-8 flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
 				>
-					<span>{isExpanded ? "View Less" : "View More"}</span>
-					<span>{isExpanded ? "−" : "+"}</span>
+					<span>{isExpanded ? "Hide" : "Longer"}</span>
 				</button>
 
 				{onViewOriginal && (
@@ -53,8 +52,7 @@ export function DocumentSummary({ content, onViewOriginal }: DocumentSummaryProp
 						onClick={onViewOriginal}
 						className="flex items-center h-8 gap-2 flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
 					>
-						<span>View Original</span>
-						<span>&gt;</span>
+						<span>Original</span>
 					</button>
 				)}
 			</div>
