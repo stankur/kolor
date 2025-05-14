@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface DocumentSummaryProps {
   content: string[];
   onViewOriginal?: () => void;
+  isSimpleView?: boolean;
 }
 
-export function DocumentSummary({ content, onViewOriginal }: DocumentSummaryProps) {
+export function DocumentSummary({ content, onViewOriginal, isSimpleView = false }: DocumentSummaryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   if (!content || content.length === 0) return null;
@@ -52,7 +53,7 @@ export function DocumentSummary({ content, onViewOriginal }: DocumentSummaryProp
 						onClick={onViewOriginal}
 						className="flex items-center h-8 gap-2 flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
 					>
-						<span>Original</span>
+						<span>{isSimpleView ? 'Simple' : 'Original'}</span>
 					</button>
 				)}
 			</div>

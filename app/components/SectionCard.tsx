@@ -9,9 +9,10 @@ import { processTextArray } from '../utils/formatText';
 interface SectionCardProps {
   section: Section;
   navigateToSection: (section: Section) => void;
+  animationDelay?: number;
 }
 
-export function SectionCard({ section, navigateToSection }: SectionCardProps) {
+export function SectionCard({ section, navigateToSection, animationDelay = 0 }: SectionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showFullTOC, setShowFullTOC] = useState(false);
 
@@ -31,7 +32,7 @@ export function SectionCard({ section, navigateToSection }: SectionCardProps) {
 			}`}
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.3 }}
+			transition={{ duration: 0.3, delay: animationDelay }}
 		>
 			{/* Top section with image, title, and short summary */}
 			<div
