@@ -40,7 +40,7 @@ export function DocumentSummary({ content, onViewOriginal, isSimpleView = false 
 				)}
 			</AnimatePresence>
 
-			<div className="flex justify-end gap-3 mt-2">
+			{/* <div className="flex justify-end gap-3 mt-2">
 				<button
 					onClick={() => setIsExpanded(!isExpanded)}
 					className="flex items-center gap-2 h-8 flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
@@ -56,7 +56,7 @@ export function DocumentSummary({ content, onViewOriginal, isSimpleView = false 
 						<span>{isSimpleView ? 'Simple' : 'Original'}</span>
 					</button>
 				)}
-			</div>
+			</div> */}
 		</div>
   );
 }

@@ -22,7 +22,10 @@ export function ExpandableTableOfContents({
       return (
         <li key={`${level}-${index}`} className="w-full">
           <button
-            onClick={() => onNavigate(section)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onNavigate(section);
+            }}
             className={`${level === 0 ? "text-blue-600 text-sm" : "text-blue-500 text-xs"}
                        hover:text-blue-800 font-medium text-left break-words w-full
                        ${level > 0 ? "ml-" + (level * 4) : ""}`}

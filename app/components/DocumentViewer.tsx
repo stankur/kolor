@@ -118,18 +118,65 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 
 	// Handle navigation through sections
 	const navigateToSection = (section: Section) => {
-		// Add this section to the breadcrumb path
-		const newPath = [
-			...activePath,
-			{
-				id: section.heading
-					.join("-")
-					.toLowerCase()
-					.replace(/[^a-z0-9-]/g, "-"),
-				label: processTextArray(section.heading),
-				section,
-			},
-		];
+		// Check if this section has parent information (added by SectionCard)
+		const parentSection = (section as any).parentSection;
+		
+		// Build the path differently based on whether we have parent information
+		let newPath;
+		
+		if (parentSection) {
+			// Find parent section in the current path if it exists
+			const parentIndex = activePath.findIndex(item => 
+				item.section && 
+				item.section.heading.join('') === parentSection.heading.join('')
+			);
+			
+			if (parentIndex !== -1) {
+				// Parent exists in path, add this section after the parent
+				newPath = [...activePath.slice(0, parentIndex + 1), {
+					id: section.heading
+						.join("-")
+						.toLowerCase()
+						.replace(/[^a-z0-9-]/g, "-"),
+					label: processTextArray(section.heading),
+					section: { ...section, parentSection: undefined }, // Remove circular reference
+				}];
+			} else {
+				// Parent not in path (rare case), build path with parent + this section
+				newPath = [
+					...activePath,
+					{
+						id: parentSection.heading
+							.join("-")
+							.toLowerCase()
+							.replace(/[^a-z0-9-]/g, "-"),
+						label: processTextArray(parentSection.heading),
+						section: parentSection,
+					},
+					{
+						id: section.heading
+							.join("-")
+							.toLowerCase()
+							.replace(/[^a-z0-9-]/g, "-"),
+						label: processTextArray(section.heading),
+						section: { ...section, parentSection: undefined }, // Remove circular reference
+					},
+				];
+			}
+		} else {
+			// No parent section, proceed as before
+			newPath = [
+				...activePath,
+				{
+					id: section.heading
+						.join("-")
+						.toLowerCase()
+						.replace(/[^a-z0-9-]/g, "-"),
+					label: processTextArray(section.heading),
+					section,
+				},
+			];
+		}
 
 		setActivePath(newPath);
 

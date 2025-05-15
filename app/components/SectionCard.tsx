@@ -16,11 +16,26 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
   const [isExpanded, setIsExpanded] = useState(false);
   const [showFullTOC, setShowFullTOC] = useState(false);
 
-  const hasChildSections = Array.isArray(section.children) &&
-                          section.children.length > 0 &&
-                          typeof section.children[0] !== 'string';
+  const hasChildSections = section.children.some((child) => Array.isArray(child))
 
-  const childSections = hasChildSections ? section.children as Section[] : [];
+  // Process child sections to ensure we have proper Section objects
+  const childSections = hasChildSections 
+    ? section.children.filter((child) => Array.isArray(child)).flat() as Section[]
+    : []
+
+  // Enhanced navigate function for child sections
+  // This maintains the parent section's context
+  const navigateToChildSection = (childSection: Section) => {
+    // First, we need to enrich the child section with parent information
+    // We do this by creating a parent reference in the child section
+    // The DocumentViewer will use this to build the correct URL path
+    const enrichedChildSection = {
+      ...childSection,
+      parentSection: section
+    };
+    
+    navigateToSection(enrichedChildSection);
+  };
 
   return (
 		<motion.div
@@ -88,7 +103,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: "auto" }}
 							exit={{ opacity: 0, height: 0 }}
-							className="w-full overflow-hidden mb-4"
+							className="w-full overflow-hidden mb-2"
 						>
 							{section.longSummary &&
 								section.longSummary.length > 0 && (
@@ -101,11 +116,11 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 
 							{/* Horizontal scrolling section pills */}
 							{hasChildSections && childSections.length > 0 && (
-								<div className="w-full">
-									{/* <SectionPills
+								<div className="w-full pt-4">
+									<SectionPills
 										sections={childSections}
-										onNavigate={navigateToSection}
-									/> */}
+										onNavigate={navigateToChildSection}
+									/>
 
 									{/* Toggle button for expanded TOC */}
 									{/* {childSections.length > 0 && (
@@ -137,7 +152,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 									{/* Expanded Table of Contents (conditional) */}
 									<ExpandableTableOfContents
 										sections={childSections}
-										onNavigate={navigateToSection}
+										onNavigate={navigateToChildSection}
 										isVisible={showFullTOC}
 									/>
 								</div>
