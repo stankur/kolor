@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { FullContentView } from "./FullContentView";
+// import { FullContentView } from "./FullContentView";
 import {
 	Document,
 	Section,
@@ -11,7 +11,7 @@ import {
 } from "../utils/supabase";
 import { Breadcrumb } from "./Breadcrumb";
 import { SectionCard } from "./SectionCard";
-// import { DocumentSummary } from "./DocumentSummary";
+import { DocumentSummary } from "./DocumentSummary";
 import { processTextArray } from "../utils/formatText";
 
 interface BreadcrumbItem {
@@ -29,7 +29,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const [loading, setLoading] = useState(true);
 	const [activePath, setActivePath] = useState<BreadcrumbItem[]>([]);
 	const [currentSections, setCurrentSections] = useState<Section[]>([]);
-	// const [showFullContent, setShowFullContent] = useState(false);
+	const [showFullContent, setShowFullContent] = useState(false);
 	
 	const router = useRouter();
 	const pathname = usePathname();
@@ -298,11 +298,11 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								animate={{ opacity: 1 }}
 								transition={{ delay: 0.3, duration: 0.3 }}
 							>
-								{/* <DocumentSummary
+								<DocumentSummary
 									content={document.longSummary}
 									onViewOriginal={() => setShowFullContent(!showFullContent)}
 									isSimpleView={showFullContent}
-								/> */}
+								/>
 							</motion.div>
 
 							{/* Bigger gap between main content and section cards */}
@@ -358,7 +358,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 										animate={{ opacity: 1 }}
 										transition={{ delay: 0.3, duration: 0.3 }}
 									>
-										{/* <DocumentSummary
+										<DocumentSummary
 											content={
 												(
 													activePath[activePath.length - 1]
@@ -367,7 +367,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 											}
 											onViewOriginal={() => setShowFullContent(!showFullContent)}
 											isSimpleView={showFullContent}
-										/> */}
+										/>
 									</motion.div>
 								)}
 
@@ -404,7 +404,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						transition={{ duration: 0.3 }}
 						className="prose prose-lg max-w-none"
 					>
-						{activePath.length === 2 && document ? (
+						{/* {activePath.length === 2 && document ? (
 							<FullContentView 
 								section={document as unknown as Section}
 								showTitle={false}
@@ -416,7 +416,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 							/>
 						) : (
 							<p>No content available</p>
-						)}
+						)} */}
 					</motion.div>
 				)}
 
