@@ -11,7 +11,7 @@ import {
 } from "../utils/supabase";
 import { Breadcrumb } from "./Breadcrumb";
 import { SectionCard } from "./SectionCard";
-import { DocumentSummary } from "./DocumentSummary";
+// import { DocumentSummary } from "./DocumentSummary";
 import { processTextArray } from "../utils/formatText";
 
 interface BreadcrumbItem {
@@ -29,7 +29,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const [loading, setLoading] = useState(true);
 	const [activePath, setActivePath] = useState<BreadcrumbItem[]>([]);
 	const [currentSections, setCurrentSections] = useState<Section[]>([]);
-	const [showFullContent, setShowFullContent] = useState(false);
+	// const [showFullContent, setShowFullContent] = useState(false);
 	
 	const router = useRouter();
 	const pathname = usePathname();
@@ -62,7 +62,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 					
 					// Recursively find sections based on IDs in the path
 					let currentSectionList = doc.children;
-					let newPath = [...initialPath];
+					const newPath = [...initialPath];
 					
 					for (const sectionId of sectionIds) {
 						// Find the section that matches this ID
@@ -79,7 +79,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 							newPath.push({
 								id: sectionId,
 								label: processTextArray(matchedSection.heading),
-								section: matchedSection,
+								// section: matchedSection,
 							});
 							
 							// Update current sections to this section's children
@@ -119,7 +119,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	// Handle navigation through sections
 	const navigateToSection = (section: Section) => {
 		// Check if this section has parent information (added by SectionCard)
-		const parentSection = (section as any).parentSection;
+		const parentSection = (section).parentSection;
 		
 		// Build the path differently based on whether we have parent information
 		let newPath;
@@ -298,11 +298,11 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								animate={{ opacity: 1 }}
 								transition={{ delay: 0.3, duration: 0.3 }}
 							>
-								<DocumentSummary
+								{/* <DocumentSummary
 									content={document.longSummary}
 									onViewOriginal={() => setShowFullContent(!showFullContent)}
 									isSimpleView={showFullContent}
-								/>
+								/> */}
 							</motion.div>
 
 							{/* Bigger gap between main content and section cards */}
@@ -358,7 +358,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 										animate={{ opacity: 1 }}
 										transition={{ delay: 0.3, duration: 0.3 }}
 									>
-										<DocumentSummary
+										{/* <DocumentSummary
 											content={
 												(
 													activePath[activePath.length - 1]
@@ -367,7 +367,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 											}
 											onViewOriginal={() => setShowFullContent(!showFullContent)}
 											isSimpleView={showFullContent}
-										/>
+										/> */}
 									</motion.div>
 								)}
 
@@ -380,7 +380,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 
 				{/* Section cards */}
 				{/* Content Display */}
-				{!showFullContent ? (
+				{!false ? (
 					<motion.div
 						key={`section-cards-${activePath.map(p => p.id).join('-')}`}
 						initial={{ opacity: 0 }}
@@ -421,7 +421,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				)}
 
 				{/* Show "no contents" message if no sections exist */}
-				{!showFullContent && currentSections.length === 0 && activePath.length > 2 && (
+				{ currentSections.length === 0 && activePath.length > 2 && (
 					<p className="text-center text-gray-500 my-8">
 						This section has no subsections.
 					</p>

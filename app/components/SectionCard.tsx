@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Section } from '../utils/supabase';
 import { SectionPills } from './SectionPills';
-import { ExpandableTableOfContents } from './ExpandableTableOfContents';
+// import { ExpandableTableOfContents } from './ExpandableTableOfContents';
 import Image from 'next/image';
 import { processTextArray } from '../utils/formatText';
 
@@ -14,7 +14,7 @@ interface SectionCardProps {
 
 export function SectionCard({ section, navigateToSection, animationDelay = 0 }: SectionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showFullTOC, setShowFullTOC] = useState(false);
+//   const [showFullTOC, setShowFullTOC] = useState(false);
 
   const hasChildSections = section.children.some((child) => Array.isArray(child))
 
@@ -150,11 +150,11 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 									)} */}
 
 									{/* Expanded Table of Contents (conditional) */}
-									<ExpandableTableOfContents
+									{/* <ExpandableTableOfContents
 										sections={childSections}
 										onNavigate={navigateToChildSection}
 										isVisible={showFullTOC}
-									/>
+									/> */}
 								</div>
 							)}
 						</motion.div>

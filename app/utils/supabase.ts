@@ -17,6 +17,7 @@ export interface Section {
 	summary: string[];
 	longSummary: string[];
 	imageUrl?: string;
+    parentSection?: Section;
 }
 
 export type SectionContainer = Section[];
@@ -50,405 +51,405 @@ export async function fetchDocumentByTitle(
 // Mock data implementation for development
 export function getMockDocument(): Document {
 	// This is an example mock document that follows your structure
-	const mockDocument: Document = {
-		title: ["The Story of Everything"],
-		summary: ["A journey from the Big Bang to consciousness"],
-		longSummary: [
-			"This comprehensive book takes you through the entire history of the universe, from the first moments after the Big Bang, through the formation of stars and planets, to the emergence of life and consciousness on Earth.",
-		],
-		children: [
-			{
-				heading: ["The Beginning of Time"],
-				summary: [
-					"How the universe came to be in its earliest moments.",
-				],
-				longSummary: [
-					"This chapter explores the fascinating theories about the birth of our universe, from the Big Bang to inflation theory. We examine the evidence from cosmic background radiation and what it tells us about the universe's origins. The chapter also discusses how the fundamental forces of nature emerged in the first fractions of a second after creation.",
-				],
-				directContent: [],
-				children: [
-					{
-						heading: ["The Big Bang Theory"],
-						summary: [
-							"Evidence and development of the Big Bang model.",
-						],
-						longSummary: [
-							"The Big Bang theory is the prevailing cosmological model explaining the existence of the observable universe from the earliest known periods through its subsequent large-scale evolution. The model describes how the universe expanded from an initial state of high density and temperature, and offers a comprehensive explanation for a broad range of observed phenomena.",
-						],
-						directContent: [
-							"The theory was initially proposed by Georges Lemaître in 1927.",
-						],
-						children: [
-							{
-								heading: ["Historical Development"],
-								summary: [
-									"How the Big Bang theory evolved over time.",
-								],
-								longSummary: [
-									"The concept of the Big Bang has evolved significantly since it was first proposed, incorporating new observations and theoretical developments in physics.",
-								],
-								directContent: [
-									"The term 'Big Bang' was coined by Fred Hoyle during a radio broadcast in 1949.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Observable Evidence"],
-								summary: [
-									"Key observations supporting the Big Bang theory.",
-								],
-								longSummary: [
-									"Multiple lines of observational evidence support the Big Bang theory, including cosmic microwave background radiation, the abundance of light elements, and the redshift of distant galaxies.",
-								],
-								directContent: [
-									"The cosmic microwave background radiation, discovered in 1965, is considered the strongest evidence for the Big Bang.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-					{
-						heading: ["The First Three Minutes"],
-						summary: [
-							"What happened immediately after the Big Bang.",
-						],
-						longSummary: [
-							"The first three minutes after the Big Bang were crucial for the development of the universe as we know it. During this brief period, the fundamental forces separated, quarks formed hadrons, and light elements began to form.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["Planck Epoch"],
-								summary: [
-									"The earliest known period of the universe.",
-								],
-								longSummary: [
-									"During the Planck epoch, from zero to approximately 10^-43 seconds after the Big Bang, all four fundamental forces were unified as a single force.",
-								],
-								directContent: [
-									"This epoch is named after Max Planck, the founder of quantum theory.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Inflationary Period"],
-								summary: [
-									"The rapid expansion of the early universe.",
-								],
-								longSummary: [
-									"The inflationary period was an extremely rapid expansion of the universe that occurred between 10^-36 to 10^-32 seconds after the Big Bang.",
-								],
-								directContent: [
-									"Cosmic inflation explains why the universe appears flat and uniform at large scales.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-					{
-						heading: ["Formation of Fundamental Forces"],
-						summary: ["How the four fundamental forces separated."],
-						longSummary: [
-							"The four fundamental forces—gravity, electromagnetism, the strong nuclear force, and the weak nuclear force—were unified in the extreme heat of the early universe and separated as the universe cooled.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["Symmetry Breaking"],
-								summary: ["The process of force separation."],
-								longSummary: [
-									"Symmetry breaking is a phenomenon in which the universe transitions from a symmetric state to one with reduced symmetry, allowing the fundamental forces to separate.",
-								],
-								directContent: [
-									"The concept of symmetry breaking in physics was developed by Yoichiro Nambu in the 1960s.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Electroweak Separation"],
-								summary: [
-									"The separation of electromagnetic and weak forces.",
-								],
-								longSummary: [
-									"The electroweak interaction is the unified description of two of the four fundamental forces: electromagnetism and the weak interaction.",
-								],
-								directContent: [
-									"The electroweak theory was developed by Sheldon Glashow, Abdus Salam, and Steven Weinberg, who shared the 1979 Nobel Prize in Physics for this work.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-				],
-			},
-			{
-				heading: ["The Rise of Complexity"],
-				summary: ["From simple atoms to the first complex molecules."],
-				longSummary: [
-					"Following the initial expansion and cooling of the universe, this chapter tracks how simple hydrogen and helium atoms formed, then clustered into stars where nuclear fusion created heavier elements. We explore stellar lifecycles and how supernovae scattered these elements across space, enabling the formation of planets and eventually complex organic molecules.",
-				],
-				directContent: [],
-				children: [
-					{
-						heading: ["Element Formation in Stars"],
-						summary: ["How fusion creates heavier elements."],
-						longSummary: [
-							"Stars act as cosmic factories, fusing lighter elements into heavier ones through nuclear fusion. This process, known as stellar nucleosynthesis, is responsible for creating most of the elements in the universe.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["Hydrogen Fusion"],
-								summary: [
-									"The primary energy source in main sequence stars.",
-								],
-								longSummary: [
-									"Hydrogen fusion is the process by which four hydrogen nuclei combine to form a helium nucleus, releasing energy that powers stars like our sun.",
-								],
-								directContent: [
-									"The primary fusion path in our sun is called the proton-proton chain.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Helium Burning"],
-								summary: ["The next stage of stellar fusion."],
-								longSummary: [
-									"When stars exhaust their hydrogen fuel, they begin to fuse helium into carbon and oxygen in a process called helium burning or the triple-alpha process.",
-								],
-								directContent: [
-									"Helium burning typically occurs at temperatures around 100 million Kelvin.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-					{
-						heading: ["Supernovae and Element Dispersal"],
-						summary: ["How elements spread throughout galaxies."],
-						longSummary: [
-							"Supernovae are powerful explosions that mark the end of a star's life. These cosmic events distribute heavy elements throughout space, enriching the interstellar medium with the building blocks for new stars, planets, and eventually life.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["Types of Supernovae"],
-								summary: [
-									"Different mechanisms for stellar explosions.",
-								],
-								longSummary: [
-									"There are two main types of supernovae: Type Ia, which occur in binary star systems when a white dwarf accretes material from its companion; and Type II, which result from the collapse of massive stars.",
-								],
-								directContent: [
-									"Type Ia supernovae are used as 'standard candles' to measure cosmic distances.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Heavy Element Creation"],
-								summary: [
-									"Formation of elements heavier than iron.",
-								],
-								longSummary: [
-									"Elements heavier than iron cannot be produced through fusion in stellar cores because these reactions would consume rather than release energy. Instead, these elements form during supernovae through rapid neutron capture processes.",
-								],
-								directContent: [
-									"Gold, platinum, and uranium are primarily created in neutron star mergers and supernovae.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-				],
-			},
-			{
-				heading: ["The Emergence of Life"],
-				summary: [
-					"How chemistry transformed into biology on early Earth.",
-				],
-				longSummary: [
-					"This chapter examines the conditions of early Earth and how they facilitated the transition from complex organic chemistry to self-replicating systems. We explore leading theories about the origin of life, from deep-sea hydrothermal vents to RNA world hypotheses, and how the first primitive cells may have developed their basic metabolic processes and protective membranes.",
-				],
-				directContent: [],
-				children: [
-					{
-						heading: ["Prebiotic Chemistry"],
-						summary: ["Chemical precursors to biological systems."],
-						longSummary: [
-							"Prebiotic chemistry refers to the chemical reactions that occurred on early Earth before the emergence of life, producing the organic compounds necessary for biological processes.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["Miller-Urey Experiment"],
-								summary: ["Simulating early Earth conditions."],
-								longSummary: [
-									"The Miller-Urey experiment, conducted in 1952, demonstrated that organic compounds including amino acids could be synthesized from simple inorganic precursors under conditions simulating early Earth's atmosphere.",
-								],
-								directContent: [
-									"The experiment produced at least 11 of the 20 amino acids used in proteins by living organisms.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Formation of Amino Acids"],
-								summary: ["Building blocks of proteins."],
-								longSummary: [
-									"Amino acids, the building blocks of proteins, could have formed on early Earth through various mechanisms, including atmospheric reactions, hydrothermal vents, and extraterrestrial delivery via meteorites.",
-								],
-								directContent: [
-									"Amino acids have been found in meteorites, suggesting they may be common throughout the universe.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-					{
-						heading: ["RNA World Hypothesis"],
-						summary: [
-							"RNA as the original self-replicating molecule.",
-						],
-						longSummary: [
-							"The RNA world hypothesis suggests that before DNA and proteins, life was based on RNA molecules that could both store genetic information and catalyze chemical reactions.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["RNA Catalysis"],
-								summary: ["RNA molecules acting as enzymes."],
-								longSummary: [
-									"Ribozymes are RNA molecules that can catalyze chemical reactions, similar to protein enzymes. Their discovery supported the RNA world hypothesis by showing that RNA could have both carried genetic information and facilitated metabolism.",
-								],
-								directContent: [
-									"The discovery of ribozymes by Thomas Cech and Sidney Altman earned them the Nobel Prize in Chemistry in 1989.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["From RNA to DNA"],
-								summary: ["The transition to modern genetics."],
-								longSummary: [
-									"The transition from an RNA-based world to the DNA-protein world we see today likely occurred gradually, with DNA evolving as a more stable storage medium for genetic information and proteins taking over most catalytic functions.",
-								],
-								directContent: [
-									"DNA is more stable than RNA because its sugar component lacks an oxygen atom, making it less prone to degradation.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-					{
-						heading: ["First Cell Membranes"],
-						summary: [
-							"Development of contained biological systems.",
-						],
-						longSummary: [
-							"Cell membranes were crucial for the origin of life, providing enclosed environments where biochemical reactions could occur concentrated and protected from the external environment.",
-						],
-						directContent: [],
-						children: [
-							{
-								heading: ["Lipid Formation"],
-								summary: ["Self-assembling molecules."],
-								longSummary: [
-									"Lipids can spontaneously form bilayers in water due to their amphipathic nature, with hydrophilic heads facing the water and hydrophobic tails clustering together. This self-assembly property may have facilitated the formation of the first cell membranes.",
-								],
-								directContent: [
-									"Simple lipids can form spontaneously under prebiotic conditions.",
-								],
-								children: [] as string[],
-							},
-							{
-								heading: ["Protocells"],
-								summary: ["Primitive cell-like structures."],
-								longSummary: [
-									"Protocells were simple membrane-bound compartments that preceded true cells, potentially providing environments where early metabolic reactions and replication could occur with some isolation from the external environment.",
-								],
-								directContent: [
-									"Laboratory experiments have created protocells capable of growth and division.",
-								],
-								children: [] as string[],
-							},
-						],
-					},
-				],
-			},
-		],
-	};
+	// const mockDocument: Document = {
+	// 	title: ["The Story of Everything"],
+	// 	summary: ["A journey from the Big Bang to consciousness"],
+	// 	longSummary: [
+	// 		"This comprehensive book takes you through the entire history of the universe, from the first moments after the Big Bang, through the formation of stars and planets, to the emergence of life and consciousness on Earth.",
+	// 	],
+	// 	children: [
+	// 		{
+	// 			heading: ["The Beginning of Time"],
+	// 			summary: [
+	// 				"How the universe came to be in its earliest moments.",
+	// 			],
+	// 			longSummary: [
+	// 				"This chapter explores the fascinating theories about the birth of our universe, from the Big Bang to inflation theory. We examine the evidence from cosmic background radiation and what it tells us about the universe's origins. The chapter also discusses how the fundamental forces of nature emerged in the first fractions of a second after creation.",
+	// 			],
+	// 			directContent: [],
+	// 			children: [
+	// 				{
+	// 					heading: ["The Big Bang Theory"],
+	// 					summary: [
+	// 						"Evidence and development of the Big Bang model.",
+	// 					],
+	// 					longSummary: [
+	// 						"The Big Bang theory is the prevailing cosmological model explaining the existence of the observable universe from the earliest known periods through its subsequent large-scale evolution. The model describes how the universe expanded from an initial state of high density and temperature, and offers a comprehensive explanation for a broad range of observed phenomena.",
+	// 					],
+	// 					directContent: [
+	// 						"The theory was initially proposed by Georges Lemaître in 1927.",
+	// 					],
+	// 					children: [
+	// 						{
+	// 							heading: ["Historical Development"],
+	// 							summary: [
+	// 								"How the Big Bang theory evolved over time.",
+	// 							],
+	// 							longSummary: [
+	// 								"The concept of the Big Bang has evolved significantly since it was first proposed, incorporating new observations and theoretical developments in physics.",
+	// 							],
+	// 							directContent: [
+	// 								"The term 'Big Bang' was coined by Fred Hoyle during a radio broadcast in 1949.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Observable Evidence"],
+	// 							summary: [
+	// 								"Key observations supporting the Big Bang theory.",
+	// 							],
+	// 							longSummary: [
+	// 								"Multiple lines of observational evidence support the Big Bang theory, including cosmic microwave background radiation, the abundance of light elements, and the redshift of distant galaxies.",
+	// 							],
+	// 							directContent: [
+	// 								"The cosmic microwave background radiation, discovered in 1965, is considered the strongest evidence for the Big Bang.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					heading: ["The First Three Minutes"],
+	// 					summary: [
+	// 						"What happened immediately after the Big Bang.",
+	// 					],
+	// 					longSummary: [
+	// 						"The first three minutes after the Big Bang were crucial for the development of the universe as we know it. During this brief period, the fundamental forces separated, quarks formed hadrons, and light elements began to form.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["Planck Epoch"],
+	// 							summary: [
+	// 								"The earliest known period of the universe.",
+	// 							],
+	// 							longSummary: [
+	// 								"During the Planck epoch, from zero to approximately 10^-43 seconds after the Big Bang, all four fundamental forces were unified as a single force.",
+	// 							],
+	// 							directContent: [
+	// 								"This epoch is named after Max Planck, the founder of quantum theory.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Inflationary Period"],
+	// 							summary: [
+	// 								"The rapid expansion of the early universe.",
+	// 							],
+	// 							longSummary: [
+	// 								"The inflationary period was an extremely rapid expansion of the universe that occurred between 10^-36 to 10^-32 seconds after the Big Bang.",
+	// 							],
+	// 							directContent: [
+	// 								"Cosmic inflation explains why the universe appears flat and uniform at large scales.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					heading: ["Formation of Fundamental Forces"],
+	// 					summary: ["How the four fundamental forces separated."],
+	// 					longSummary: [
+	// 						"The four fundamental forces—gravity, electromagnetism, the strong nuclear force, and the weak nuclear force—were unified in the extreme heat of the early universe and separated as the universe cooled.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["Symmetry Breaking"],
+	// 							summary: ["The process of force separation."],
+	// 							longSummary: [
+	// 								"Symmetry breaking is a phenomenon in which the universe transitions from a symmetric state to one with reduced symmetry, allowing the fundamental forces to separate.",
+	// 							],
+	// 							directContent: [
+	// 								"The concept of symmetry breaking in physics was developed by Yoichiro Nambu in the 1960s.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Electroweak Separation"],
+	// 							summary: [
+	// 								"The separation of electromagnetic and weak forces.",
+	// 							],
+	// 							longSummary: [
+	// 								"The electroweak interaction is the unified description of two of the four fundamental forces: electromagnetism and the weak interaction.",
+	// 							],
+	// 							directContent: [
+	// 								"The electroweak theory was developed by Sheldon Glashow, Abdus Salam, and Steven Weinberg, who shared the 1979 Nobel Prize in Physics for this work.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 			],
+	// 		},
+	// 		{
+	// 			heading: ["The Rise of Complexity"],
+	// 			summary: ["From simple atoms to the first complex molecules."],
+	// 			longSummary: [
+	// 				"Following the initial expansion and cooling of the universe, this chapter tracks how simple hydrogen and helium atoms formed, then clustered into stars where nuclear fusion created heavier elements. We explore stellar lifecycles and how supernovae scattered these elements across space, enabling the formation of planets and eventually complex organic molecules.",
+	// 			],
+	// 			directContent: [],
+	// 			children: [
+	// 				{
+	// 					heading: ["Element Formation in Stars"],
+	// 					summary: ["How fusion creates heavier elements."],
+	// 					longSummary: [
+	// 						"Stars act as cosmic factories, fusing lighter elements into heavier ones through nuclear fusion. This process, known as stellar nucleosynthesis, is responsible for creating most of the elements in the universe.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["Hydrogen Fusion"],
+	// 							summary: [
+	// 								"The primary energy source in main sequence stars.",
+	// 							],
+	// 							longSummary: [
+	// 								"Hydrogen fusion is the process by which four hydrogen nuclei combine to form a helium nucleus, releasing energy that powers stars like our sun.",
+	// 							],
+	// 							directContent: [
+	// 								"The primary fusion path in our sun is called the proton-proton chain.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Helium Burning"],
+	// 							summary: ["The next stage of stellar fusion."],
+	// 							longSummary: [
+	// 								"When stars exhaust their hydrogen fuel, they begin to fuse helium into carbon and oxygen in a process called helium burning or the triple-alpha process.",
+	// 							],
+	// 							directContent: [
+	// 								"Helium burning typically occurs at temperatures around 100 million Kelvin.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					heading: ["Supernovae and Element Dispersal"],
+	// 					summary: ["How elements spread throughout galaxies."],
+	// 					longSummary: [
+	// 						"Supernovae are powerful explosions that mark the end of a star's life. These cosmic events distribute heavy elements throughout space, enriching the interstellar medium with the building blocks for new stars, planets, and eventually life.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["Types of Supernovae"],
+	// 							summary: [
+	// 								"Different mechanisms for stellar explosions.",
+	// 							],
+	// 							longSummary: [
+	// 								"There are two main types of supernovae: Type Ia, which occur in binary star systems when a white dwarf accretes material from its companion; and Type II, which result from the collapse of massive stars.",
+	// 							],
+	// 							directContent: [
+	// 								"Type Ia supernovae are used as 'standard candles' to measure cosmic distances.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Heavy Element Creation"],
+	// 							summary: [
+	// 								"Formation of elements heavier than iron.",
+	// 							],
+	// 							longSummary: [
+	// 								"Elements heavier than iron cannot be produced through fusion in stellar cores because these reactions would consume rather than release energy. Instead, these elements form during supernovae through rapid neutron capture processes.",
+	// 							],
+	// 							directContent: [
+	// 								"Gold, platinum, and uranium are primarily created in neutron star mergers and supernovae.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 			],
+	// 		},
+	// 		{
+	// 			heading: ["The Emergence of Life"],
+	// 			summary: [
+	// 				"How chemistry transformed into biology on early Earth.",
+	// 			],
+	// 			longSummary: [
+	// 				"This chapter examines the conditions of early Earth and how they facilitated the transition from complex organic chemistry to self-replicating systems. We explore leading theories about the origin of life, from deep-sea hydrothermal vents to RNA world hypotheses, and how the first primitive cells may have developed their basic metabolic processes and protective membranes.",
+	// 			],
+	// 			directContent: [],
+	// 			children: [
+	// 				{
+	// 					heading: ["Prebiotic Chemistry"],
+	// 					summary: ["Chemical precursors to biological systems."],
+	// 					longSummary: [
+	// 						"Prebiotic chemistry refers to the chemical reactions that occurred on early Earth before the emergence of life, producing the organic compounds necessary for biological processes.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["Miller-Urey Experiment"],
+	// 							summary: ["Simulating early Earth conditions."],
+	// 							longSummary: [
+	// 								"The Miller-Urey experiment, conducted in 1952, demonstrated that organic compounds including amino acids could be synthesized from simple inorganic precursors under conditions simulating early Earth's atmosphere.",
+	// 							],
+	// 							directContent: [
+	// 								"The experiment produced at least 11 of the 20 amino acids used in proteins by living organisms.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Formation of Amino Acids"],
+	// 							summary: ["Building blocks of proteins."],
+	// 							longSummary: [
+	// 								"Amino acids, the building blocks of proteins, could have formed on early Earth through various mechanisms, including atmospheric reactions, hydrothermal vents, and extraterrestrial delivery via meteorites.",
+	// 							],
+	// 							directContent: [
+	// 								"Amino acids have been found in meteorites, suggesting they may be common throughout the universe.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					heading: ["RNA World Hypothesis"],
+	// 					summary: [
+	// 						"RNA as the original self-replicating molecule.",
+	// 					],
+	// 					longSummary: [
+	// 						"The RNA world hypothesis suggests that before DNA and proteins, life was based on RNA molecules that could both store genetic information and catalyze chemical reactions.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["RNA Catalysis"],
+	// 							summary: ["RNA molecules acting as enzymes."],
+	// 							longSummary: [
+	// 								"Ribozymes are RNA molecules that can catalyze chemical reactions, similar to protein enzymes. Their discovery supported the RNA world hypothesis by showing that RNA could have both carried genetic information and facilitated metabolism.",
+	// 							],
+	// 							directContent: [
+	// 								"The discovery of ribozymes by Thomas Cech and Sidney Altman earned them the Nobel Prize in Chemistry in 1989.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["From RNA to DNA"],
+	// 							summary: ["The transition to modern genetics."],
+	// 							longSummary: [
+	// 								"The transition from an RNA-based world to the DNA-protein world we see today likely occurred gradually, with DNA evolving as a more stable storage medium for genetic information and proteins taking over most catalytic functions.",
+	// 							],
+	// 							directContent: [
+	// 								"DNA is more stable than RNA because its sugar component lacks an oxygen atom, making it less prone to degradation.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 				{
+	// 					heading: ["First Cell Membranes"],
+	// 					summary: [
+	// 						"Development of contained biological systems.",
+	// 					],
+	// 					longSummary: [
+	// 						"Cell membranes were crucial for the origin of life, providing enclosed environments where biochemical reactions could occur concentrated and protected from the external environment.",
+	// 					],
+	// 					directContent: [],
+	// 					children: [
+	// 						{
+	// 							heading: ["Lipid Formation"],
+	// 							summary: ["Self-assembling molecules."],
+	// 							longSummary: [
+	// 								"Lipids can spontaneously form bilayers in water due to their amphipathic nature, with hydrophilic heads facing the water and hydrophobic tails clustering together. This self-assembly property may have facilitated the formation of the first cell membranes.",
+	// 							],
+	// 							directContent: [
+	// 								"Simple lipids can form spontaneously under prebiotic conditions.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 						{
+	// 							heading: ["Protocells"],
+	// 							summary: ["Primitive cell-like structures."],
+	// 							longSummary: [
+	// 								"Protocells were simple membrane-bound compartments that preceded true cells, potentially providing environments where early metabolic reactions and replication could occur with some isolation from the external environment.",
+	// 							],
+	// 							directContent: [
+	// 								"Laboratory experiments have created protocells capable of growth and division.",
+	// 							],
+	// 							children: [] as string[],
+	// 						},
+	// 					],
+	// 				},
+	// 			],
+	// 		},
+	// 	],
+	// };
 
-	const accelerateChapter1: Document = {
-		title: ["CHAPTER 1", "ACCELERATE"],
-		children: [
-			{
-				heading: ["FOCUS ON CAPABILITIES, NOT MATURITY"],
-				children: [
-					"Technology leaders need to deliver software quickly and reliably to win in the market. For many companies, this requires significant changes to the way we deliver software. The key to successful change is measuring and understanding the right things with a focus on capabilities—not on maturity.",
-					"While maturity models are very popular in the industry, we cannot stress enough that maturity models are not the appropriate tool to use or mindset to have. Instead, shifting to a capabilities model of measurement is essential for organizations wanting to accelerate software delivery. This is due to four factors.",
-					"First, maturity models focus on helping an organization “arrive” at a mature state and then declare themselves done with their journey, whereas technology transformations should follow a continuous improvement paradigm. Alternatively, capability models focus on helping an organization continually improve and progress, realizing that the technological and business landscape is ever-changing. The most innovative companies and highest-performing organizations are always striving to be better and never consider themselves “mature” or “done” with their improvement or transformation journey—and we see this in our research.",
-					"Second, maturity models are quite often a “lock-step” or linear formula, prescribing a similar set of technologies, tooling, or capabilities for every set of teams and organizations to progress through. Maturity models assume that “Level 1” and “Level 2” look the same across all teams and organizations, but those of us who work in technology know this is not the case. In contrast, capability models are multidimensional and dynamic, allowing different parts of the organization to take a customized approach to improvement, and focus on capabilities that will give them the most benefit based on their current context and their short and long-term goals. Teams have their own context, their own systems, their own goals, and their own constraints, and what we should focus on next to accelerate our transformation depends on those things.",
-					"Third, capability models focus on key outcomes and how the capabilities, or levers, drive improvement in those outcomes—that is, they are outcome based. This provides technical leadership with clear direction and strategy on high-level goals (with a focus on capabilities to improve key outcomes). It also enables team leaders and individual contributors to set improvement goals related to the capabilities their team is focusing on for the current time period. Most maturity models simply measure the technical proficiency or tooling install base in an organization without tying it to outcomes. These end up being vanity metrics: while they can be relatively easy to measure, they don’t tell us anything about the impact they have on the business.",
-					"Fourth, maturity models define a static level of technological, process, and organizational abilities to achieve. They do not take into account the ever-changing nature of the technology and business landscape. Our own research and data have confirmed that the industry is changing: what is good enough and even “high-performing” today is no longer good enough in the next year. In contrast, capability models allow for dynamically changing environments and allow teams and organizations to focus on developing the skills and capabilities needed to remain competitive.",
-					"By focusing on a capabilities paradigm, organizations can continuously drive improvement. And by focusing on the right capabilities, organizations can drive improvements in their outcomes, allowing them to develop and deliver software with improved speed and stability. In fact, we see that the highest performers do exactly this, continually reaching for gains year over year and never settling for yesterday’s accomplishments.",
-				],
-				summary: [
-					"Focus on capabilities, not maturity, to deliver software faster and more reliably.",
-				],
-				longSummary: [
-					"To succeed in the market, technology leaders must deliver software quickly and reliably, necessitating changes in delivery methods. The focus should be on measuring capabilities rather than maturity. Maturity models are inadequate because they emphasize a final state over continuous improvement, enforce linear approaches instead of allowing customized progress, measure technical skills without linking to business outcomes, and define static abilities rather than adapting to changes. By concentrating on capabilities, organizations can continuously enhance outcomes, delivering software with greater speed and stability. Top performers consistently strive for improvement, never resting on past achievements.",
-				],
-				imageUrl:
-					"https://res.cloudinary.com/dx1e14ftg/image/upload/v1747118087/blog-cover-images/vurzbjckk1ortnfucjxx.webp",
-			},
-			{
-				heading: [
-					"EVIDENCE-BASED TRANSFORMATIONS FOCUS ON KEY CAPABILITIES",
-				],
-				children: [
-					"Within both capability and maturity model frameworks, there are disagreements about which capabilities to focus on. Product vendors often favor capabilities that align with their product offerings. Consultants favor capabilities that align with their background, their offering, and their homegrown assessment tool. We have seen organizations try to design their own assessment models, choose solutions that align with the skill sets of internal champions, or succumb to analysis paralysis because of the sheer number of areas that need improvement in their organization.",
-					"A more guided, evidence-based solution is needed, and the approach discussed in this book describes such a solution.",
-					"Our research has yielded insights into what enables both software delivery performance and organizational performance as seen in profitability, productivity, and market share. In fact, our research shows that none of the following often-cited factors predicted performance:",
-					"-   age and technology used for the application (for example, mainframe “systems of record” vs. greenfield “systems of engagement”)\n-   whether operations teams or development teams performed deployments\n-   whether a change approval board (CAB) is implemented",
-					"The things that do make a difference in the success of software delivery and organizational performance are those that the highest performers and most innovative companies use to get ahead. Our research has identified 24 key capabilities that drive improvement in software delivery performance and, in turn, organizational performance. These capabilities are easy to define, measure, and improve.[1](blob:https://johnfactotum.github.io/b23d1f9e-06ce-4628-b67b-e1d158a07526#F1) This book will get you started on defining and measuring these capabilities. We will also point you to some fantastic resources for improving them, so you can accelerate your own technology transformation journey.",
-				],
-				summary: [
-					"Discover 24 key capabilities driving top software delivery and organizational performance improvements.",
-				],
-				longSummary: [
-					"In capability and maturity model frameworks, there's debate over which capabilities to prioritize, often influenced by product vendors and consultants promoting their own offerings. Organizations frequently struggle by creating their own assessment models, relying on internal champions' skills, or getting stuck in analysis paralysis due to numerous improvement areas. This book offers a guided, evidence-based solution, revealing that software delivery and organizational performance aren't determined by application age, technology, team type, or change approval boards. Instead, the top performers excel by utilizing 24 key capabilities that are straightforward to define, measure, and improve, with the book providing guidance and resources for enhancement.",
-				],
-				imageUrl:
-					"https://res.cloudinary.com/dx1e14ftg/image/upload/v1747118098/blog-cover-images/azi2mbmbehgxexfme1pk.webp",
-			},
-			{
-				heading: ["THE VALUE OF ADOPTING DEVOPS"],
-				children: [
-					"You may be asking yourself: How do we know that these capabilities are drivers of technology and organizational performance, and why can we say it with such confidence?",
-					"The findings from our research program show clearly that the value of adopting DevOps is even larger than we had initially thought, and the gap between high and low performers continues to grow.",
-					"We discuss how we measure software delivery performance and how our cohort performs in detail in the following chapter. To summarize, in 2017 we found that, when compared to low performers, the high performers have:",
-					"-   46 times more frequent code deployments\n-   440 times faster lead time from commit to deploy\n-   170 times faster mean time to recover from downtime\n-   5 times lower change failure rate (1/5 as likely for a change to fail)",
-					"When compared to the 2016 results, the gap between high performers and low performers narrowed for tempo (deployment frequency and change lead time) and widened for stability (mean time to recover and change failure rate). We speculate that this is due to low-performing teams working to increase tempo but not investing enough in building quality into the process. The result is larger deployment failures that take more time to restore service. High performers understand that they don’t have to trade speed for stability or vice versa, because by building quality in they get both.",
-					"You may be wondering: How do high-performing teams achieve such amazing software delivery performance? They do this by turning the right levers—that is, by improving the right capabilities.",
-					"Over our four-year research program we have been able to identify the capabilities that drive performance in software delivery and impact organizational performance, and we have found that they work for all types of organizations. Our research investigated organizations of all sizes, in all industries, using legacy and greenfield technology stacks around the world—so the findings in this book will apply to the teams in your organization too.",
-					"* * *",
-					"[1](blob:https://johnfactotum.github.io/b23d1f9e-06ce-4628-b67b-e1d158a07526#Ch1)These 24 capabilities are listed, along with a pointer to the chapter that discusses them, in Appendix A.",
-				],
-				summary: [
-					"DevOps boosts performance: high performers deploy faster, recover quicker, and maintain stability effortlessly.",
-				],
-				longSummary: [
-					"Our research reveals that the benefits of adopting DevOps are greater than initially anticipated, with the disparity between high and low performers widening. In 2017, high performers achieved significantly more frequent code deployments, drastically faster lead times from commit to deploy, quicker recovery from downtime, and a lower change failure rate compared to low performers. Despite changes in tempo and stability since 2016, high performers demonstrate that speed and stability can coexist by integrating quality into their processes. Our four-year study identifies 24 key capabilities that enhance software delivery and organizational performance across various industries and technology stacks.",
-				],
-				imageUrl:
-					"https://res.cloudinary.com/dx1e14ftg/image/upload/v1747118108/blog-cover-images/fhlmmaoocmvvslyjr7cb.webp",
-			},
-		],
-		summary: [
-			"Unlock competitive edge: Embrace DevOps capabilities for rapid, reliable software delivery and transformation.",
-		],
-		longSummary: [
-			"To stay competitive, organizations must shift from traditional, lengthy projects to agile methods, using small teams and rapid user feedback to deliver value quickly. Software is crucial in this transformation, with DevOps practices enabling the creation of secure, resilient systems at scale. Despite some success, 31% of the industry lacks essential practices like continuous integration and Lean principles. There's a disconnect between executive and practitioner views on DevOps maturity, emphasizing the need to measure capabilities rather than maturity. High performers excel by focusing on 24 key capabilities that enhance software delivery and organizational performance, achieving remarkable results without sacrificing stability. This book provides guidance on defining, measuring, and improving these capabilities, demonstrating that the benefits of DevOps are greater than initially realized.",
-		],
-	};
+	// const accelerateChapter1: Document = {
+	// 	title: ["CHAPTER 1", "ACCELERATE"],
+	// 	children: [
+	// 		{
+	// 			heading: ["FOCUS ON CAPABILITIES, NOT MATURITY"],
+	// 			children: [
+	// 				"Technology leaders need to deliver software quickly and reliably to win in the market. For many companies, this requires significant changes to the way we deliver software. The key to successful change is measuring and understanding the right things with a focus on capabilities—not on maturity.",
+	// 				"While maturity models are very popular in the industry, we cannot stress enough that maturity models are not the appropriate tool to use or mindset to have. Instead, shifting to a capabilities model of measurement is essential for organizations wanting to accelerate software delivery. This is due to four factors.",
+	// 				"First, maturity models focus on helping an organization “arrive” at a mature state and then declare themselves done with their journey, whereas technology transformations should follow a continuous improvement paradigm. Alternatively, capability models focus on helping an organization continually improve and progress, realizing that the technological and business landscape is ever-changing. The most innovative companies and highest-performing organizations are always striving to be better and never consider themselves “mature” or “done” with their improvement or transformation journey—and we see this in our research.",
+	// 				"Second, maturity models are quite often a “lock-step” or linear formula, prescribing a similar set of technologies, tooling, or capabilities for every set of teams and organizations to progress through. Maturity models assume that “Level 1” and “Level 2” look the same across all teams and organizations, but those of us who work in technology know this is not the case. In contrast, capability models are multidimensional and dynamic, allowing different parts of the organization to take a customized approach to improvement, and focus on capabilities that will give them the most benefit based on their current context and their short and long-term goals. Teams have their own context, their own systems, their own goals, and their own constraints, and what we should focus on next to accelerate our transformation depends on those things.",
+	// 				"Third, capability models focus on key outcomes and how the capabilities, or levers, drive improvement in those outcomes—that is, they are outcome based. This provides technical leadership with clear direction and strategy on high-level goals (with a focus on capabilities to improve key outcomes). It also enables team leaders and individual contributors to set improvement goals related to the capabilities their team is focusing on for the current time period. Most maturity models simply measure the technical proficiency or tooling install base in an organization without tying it to outcomes. These end up being vanity metrics: while they can be relatively easy to measure, they don’t tell us anything about the impact they have on the business.",
+	// 				"Fourth, maturity models define a static level of technological, process, and organizational abilities to achieve. They do not take into account the ever-changing nature of the technology and business landscape. Our own research and data have confirmed that the industry is changing: what is good enough and even “high-performing” today is no longer good enough in the next year. In contrast, capability models allow for dynamically changing environments and allow teams and organizations to focus on developing the skills and capabilities needed to remain competitive.",
+	// 				"By focusing on a capabilities paradigm, organizations can continuously drive improvement. And by focusing on the right capabilities, organizations can drive improvements in their outcomes, allowing them to develop and deliver software with improved speed and stability. In fact, we see that the highest performers do exactly this, continually reaching for gains year over year and never settling for yesterday’s accomplishments.",
+	// 			],
+	// 			summary: [
+	// 				"Focus on capabilities, not maturity, to deliver software faster and more reliably.",
+	// 			],
+	// 			longSummary: [
+	// 				"To succeed in the market, technology leaders must deliver software quickly and reliably, necessitating changes in delivery methods. The focus should be on measuring capabilities rather than maturity. Maturity models are inadequate because they emphasize a final state over continuous improvement, enforce linear approaches instead of allowing customized progress, measure technical skills without linking to business outcomes, and define static abilities rather than adapting to changes. By concentrating on capabilities, organizations can continuously enhance outcomes, delivering software with greater speed and stability. Top performers consistently strive for improvement, never resting on past achievements.",
+	// 			],
+	// 			imageUrl:
+	// 				"https://res.cloudinary.com/dx1e14ftg/image/upload/v1747118087/blog-cover-images/vurzbjckk1ortnfucjxx.webp",
+	// 		},
+	// 		{
+	// 			heading: [
+	// 				"EVIDENCE-BASED TRANSFORMATIONS FOCUS ON KEY CAPABILITIES",
+	// 			],
+	// 			children: [
+	// 				"Within both capability and maturity model frameworks, there are disagreements about which capabilities to focus on. Product vendors often favor capabilities that align with their product offerings. Consultants favor capabilities that align with their background, their offering, and their homegrown assessment tool. We have seen organizations try to design their own assessment models, choose solutions that align with the skill sets of internal champions, or succumb to analysis paralysis because of the sheer number of areas that need improvement in their organization.",
+	// 				"A more guided, evidence-based solution is needed, and the approach discussed in this book describes such a solution.",
+	// 				"Our research has yielded insights into what enables both software delivery performance and organizational performance as seen in profitability, productivity, and market share. In fact, our research shows that none of the following often-cited factors predicted performance:",
+	// 				"-   age and technology used for the application (for example, mainframe “systems of record” vs. greenfield “systems of engagement”)\n-   whether operations teams or development teams performed deployments\n-   whether a change approval board (CAB) is implemented",
+	// 				"The things that do make a difference in the success of software delivery and organizational performance are those that the highest performers and most innovative companies use to get ahead. Our research has identified 24 key capabilities that drive improvement in software delivery performance and, in turn, organizational performance. These capabilities are easy to define, measure, and improve.[1](blob:https://johnfactotum.github.io/b23d1f9e-06ce-4628-b67b-e1d158a07526#F1) This book will get you started on defining and measuring these capabilities. We will also point you to some fantastic resources for improving them, so you can accelerate your own technology transformation journey.",
+	// 			],
+	// 			summary: [
+	// 				"Discover 24 key capabilities driving top software delivery and organizational performance improvements.",
+	// 			],
+	// 			longSummary: [
+	// 				"In capability and maturity model frameworks, there's debate over which capabilities to prioritize, often influenced by product vendors and consultants promoting their own offerings. Organizations frequently struggle by creating their own assessment models, relying on internal champions' skills, or getting stuck in analysis paralysis due to numerous improvement areas. This book offers a guided, evidence-based solution, revealing that software delivery and organizational performance aren't determined by application age, technology, team type, or change approval boards. Instead, the top performers excel by utilizing 24 key capabilities that are straightforward to define, measure, and improve, with the book providing guidance and resources for enhancement.",
+	// 			],
+	// 			imageUrl:
+	// 				"https://res.cloudinary.com/dx1e14ftg/image/upload/v1747118098/blog-cover-images/azi2mbmbehgxexfme1pk.webp",
+	// 		},
+	// 		{
+	// 			heading: ["THE VALUE OF ADOPTING DEVOPS"],
+	// 			children: [
+	// 				"You may be asking yourself: How do we know that these capabilities are drivers of technology and organizational performance, and why can we say it with such confidence?",
+	// 				"The findings from our research program show clearly that the value of adopting DevOps is even larger than we had initially thought, and the gap between high and low performers continues to grow.",
+	// 				"We discuss how we measure software delivery performance and how our cohort performs in detail in the following chapter. To summarize, in 2017 we found that, when compared to low performers, the high performers have:",
+	// 				"-   46 times more frequent code deployments\n-   440 times faster lead time from commit to deploy\n-   170 times faster mean time to recover from downtime\n-   5 times lower change failure rate (1/5 as likely for a change to fail)",
+	// 				"When compared to the 2016 results, the gap between high performers and low performers narrowed for tempo (deployment frequency and change lead time) and widened for stability (mean time to recover and change failure rate). We speculate that this is due to low-performing teams working to increase tempo but not investing enough in building quality into the process. The result is larger deployment failures that take more time to restore service. High performers understand that they don’t have to trade speed for stability or vice versa, because by building quality in they get both.",
+	// 				"You may be wondering: How do high-performing teams achieve such amazing software delivery performance? They do this by turning the right levers—that is, by improving the right capabilities.",
+	// 				"Over our four-year research program we have been able to identify the capabilities that drive performance in software delivery and impact organizational performance, and we have found that they work for all types of organizations. Our research investigated organizations of all sizes, in all industries, using legacy and greenfield technology stacks around the world—so the findings in this book will apply to the teams in your organization too.",
+	// 				"* * *",
+	// 				"[1](blob:https://johnfactotum.github.io/b23d1f9e-06ce-4628-b67b-e1d158a07526#Ch1)These 24 capabilities are listed, along with a pointer to the chapter that discusses them, in Appendix A.",
+	// 			],
+	// 			summary: [
+	// 				"DevOps boosts performance: high performers deploy faster, recover quicker, and maintain stability effortlessly.",
+	// 			],
+	// 			longSummary: [
+	// 				"Our research reveals that the benefits of adopting DevOps are greater than initially anticipated, with the disparity between high and low performers widening. In 2017, high performers achieved significantly more frequent code deployments, drastically faster lead times from commit to deploy, quicker recovery from downtime, and a lower change failure rate compared to low performers. Despite changes in tempo and stability since 2016, high performers demonstrate that speed and stability can coexist by integrating quality into their processes. Our four-year study identifies 24 key capabilities that enhance software delivery and organizational performance across various industries and technology stacks.",
+	// 			],
+	// 			imageUrl:
+	// 				"https://res.cloudinary.com/dx1e14ftg/image/upload/v1747118108/blog-cover-images/fhlmmaoocmvvslyjr7cb.webp",
+	// 		},
+	// 	],
+	// 	summary: [
+	// 		"Unlock competitive edge: Embrace DevOps capabilities for rapid, reliable software delivery and transformation.",
+	// 	],
+	// 	longSummary: [
+	// 		"To stay competitive, organizations must shift from traditional, lengthy projects to agile methods, using small teams and rapid user feedback to deliver value quickly. Software is crucial in this transformation, with DevOps practices enabling the creation of secure, resilient systems at scale. Despite some success, 31% of the industry lacks essential practices like continuous integration and Lean principles. There's a disconnect between executive and practitioner views on DevOps maturity, emphasizing the need to measure capabilities rather than maturity. High performers excel by focusing on 24 key capabilities that enhance software delivery and organizational performance, achieving remarkable results without sacrificing stability. This book provides guidance on defining, measuring, and improving these capabilities, demonstrating that the benefits of DevOps are greater than initially realized.",
+	// 	],
+	// };
 
 	const designing_data_intesive_2: Document = {
 		title: ["Designing Data Intensive Applications"],
