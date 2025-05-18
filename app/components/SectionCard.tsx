@@ -29,12 +29,8 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
     // First, we need to enrich the child section with parent information
     // We do this by creating a parent reference in the child section
     // The DocumentViewer will use this to build the correct URL path
-    const enrichedChildSection = {
-      ...childSection,
-      parentSection: section
-    };
     
-    navigateToSection(enrichedChildSection);
+    navigateToSection(childSection);
   };
 
   return (

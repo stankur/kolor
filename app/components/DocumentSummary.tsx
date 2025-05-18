@@ -12,7 +12,7 @@ interface DocumentSummaryProps {
 export function DocumentSummary({ content, onViewOriginal, isSimpleView }: DocumentSummaryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  if (!content || content.length === 0) return null;
+  if (!content || content.length === 0) return <div>yo</div>;
   
   return (
 		<div

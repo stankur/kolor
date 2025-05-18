@@ -4,14 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 // import { FullContentView } from "./FullContentView";
-import {
-	Document,
-	Section,
-	getMockDocument,
-} from "../utils/supabase";
+import { Document, Section, fetchDocumentByTitle } from "../utils/supabase";
 import { Breadcrumb } from "./Breadcrumb";
 import { SectionCard } from "./SectionCard";
-import { DocumentSummary } from "./DocumentSummary";
 import { processTextArray } from "../utils/formatText";
 
 interface BreadcrumbItem {
@@ -26,11 +21,9 @@ interface DocumentViewerProps {
 
 export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const [document, setDocument] = useState<Document | null>(null);
-	const [loading, setLoading] = useState(true);
 	const [activePath, setActivePath] = useState<BreadcrumbItem[]>([]);
 	const [currentSections, setCurrentSections] = useState<Section[]>([]);
-	const [showFullContent, setShowFullContent] = useState(false);
-	
+
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -38,12 +31,8 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	// Load the document and handle URL-based navigation
 	useEffect(() => {
 		const fetchDocument = async () => {
-			setLoading(true);
 			// In a real implementation, this would fetch from Supabase
-			// const doc = await fetchDocumentByTitle(documentTitle);
-
-			// Using mock data for now
-			const doc = getMockDocument();
+			const doc = await fetchDocumentByTitle(documentTitle);
 
 			if (doc) {
 				setDocument(doc);
@@ -55,25 +44,27 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				];
 
 				// Check if there's a section parameter in the URL
-				const sectionPath = searchParams.get('section');
+				const sectionPath = searchParams.get("section");
 				if (sectionPath) {
 					// Parse the section path from the URL
-					const sectionIds = sectionPath.split('/');
-					
+					const sectionIds = sectionPath.split("/");
+
 					// Recursively find sections based on IDs in the path
 					let currentSectionList = doc.children;
 					const newPath = [...initialPath];
-					
+
 					for (const sectionId of sectionIds) {
 						// Find the section that matches this ID
-						const matchedSection = currentSectionList.find((s: Section) => {
-							const id = s.heading
-								.join("-")
-								.toLowerCase()
-								.replace(/[^a-z0-9-]/g, "-");
-							return id === sectionId;
-						});
-						
+						const matchedSection = currentSectionList.find(
+							(s: Section) => {
+								const id = s.heading
+									.join("-")
+									.toLowerCase()
+									.replace(/[^a-z0-9-]/g, "-");
+								return id === sectionId;
+							}
+						);
+
 						if (matchedSection) {
 							// Add this section to the path
 							newPath.push({
@@ -81,12 +72,14 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								label: processTextArray(matchedSection.heading),
 								// section: matchedSection,
 							});
-							
+
 							// Update current sections to this section's children
 							if (
 								Array.isArray(matchedSection.children) &&
 								matchedSection.children.length > 0 &&
-								matchedSection.children.some((child) => Array.isArray(child))
+								matchedSection.children.some((child) =>
+									Array.isArray(child)
+								)
 							) {
 								currentSectionList = matchedSection.children
 									.filter((child) => Array.isArray(child))
@@ -99,7 +92,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 							break;
 						}
 					}
-					
+
 					// Set the final path and sections
 					setActivePath(newPath);
 					setCurrentSections(currentSectionList);
@@ -109,8 +102,6 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 					setCurrentSections(doc.children);
 				}
 			}
-
-			setLoading(false);
 		};
 
 		fetchDocument();
@@ -118,65 +109,18 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 
 	// Handle navigation through sections
 	const navigateToSection = (section: Section) => {
-		// Check if this section has parent information (added by SectionCard)
-		const parentSection = (section).parentSection;
-		
-		// Build the path differently based on whether we have parent information
-		let newPath;
-		
-		if (parentSection) {
-			// Find parent section in the current path if it exists
-			const parentIndex = activePath.findIndex(item => 
-				item.section && 
-				item.section.heading.join('') === parentSection.heading.join('')
-			);
-			
-			if (parentIndex !== -1) {
-				// Parent exists in path, add this section after the parent
-				newPath = [...activePath.slice(0, parentIndex + 1), {
-					id: section.heading
-						.join("-")
-						.toLowerCase()
-						.replace(/[^a-z0-9-]/g, "-"),
-					label: processTextArray(section.heading),
-					section: { ...section, parentSection: undefined }, // Remove circular reference
-				}];
-			} else {
-				// Parent not in path (rare case), build path with parent + this section
-				newPath = [
-					...activePath,
-					{
-						id: parentSection.heading
-							.join("-")
-							.toLowerCase()
-							.replace(/[^a-z0-9-]/g, "-"),
-						label: processTextArray(parentSection.heading),
-						section: parentSection,
-					},
-					{
-						id: section.heading
-							.join("-")
-							.toLowerCase()
-							.replace(/[^a-z0-9-]/g, "-"),
-						label: processTextArray(section.heading),
-						section: { ...section, parentSection: undefined }, // Remove circular reference
-					},
-				];
-			}
-		} else {
-			// No parent section, proceed as before
-			newPath = [
-				...activePath,
-				{
-					id: section.heading
-						.join("-")
-						.toLowerCase()
-						.replace(/[^a-z0-9-]/g, "-"),
-					label: processTextArray(section.heading),
-					section,
-				},
-			];
-		}
+		// No parent section, proceed as before
+		const newPath = [
+			...activePath,
+			{
+				id: section.heading
+					.join("-")
+					.toLowerCase()
+					.replace(/[^a-z0-9-]/g, "-"),
+				label: processTextArray(section.heading),
+				section,
+			},
+		];
 
 		setActivePath(newPath);
 
@@ -194,9 +138,12 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 		}
 
 		// Update the URL with the section path
-		const sectionPath = newPath.slice(2).map(item => item.id).join('/');
+		const sectionPath = newPath
+			.slice(2)
+			.map((item) => item.id)
+			.join("/");
 		const newUrl = new URLSearchParams(searchParams);
-		newUrl.set('section', sectionPath);
+		newUrl.set("section", sectionPath);
 		router.push(`${pathname}?${newUrl.toString()}`);
 	};
 
@@ -204,7 +151,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const handleBreadcrumbNavigation = (index: number) => {
 		if (index === 0) {
 			// Home navigation - redirect to home page
-			router.push('/');
+			router.push("/");
 			return;
 		}
 
@@ -217,10 +164,10 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 			if (document) {
 				setCurrentSections(document.children as Section[]);
 			}
-			
+
 			// Clear the section parameter from URL
 			const newUrl = new URLSearchParams(searchParams);
-			newUrl.delete('section');
+			newUrl.delete("section");
 			router.push(`${pathname}?${newUrl.toString()}`);
 		} else if (index > 1) {
 			// Section level - show its children if any
@@ -239,18 +186,21 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 			} else {
 				setCurrentSections([]);
 			}
-			
+
 			// Update the URL with the section path
-			const sectionPath = newPath.slice(2).map(item => item.id).join('/');
+			const sectionPath = newPath
+				.slice(2)
+				.map((item) => item.id)
+				.join("/");
 			const newUrl = new URLSearchParams(searchParams);
-			newUrl.set('section', sectionPath);
+			newUrl.set("section", sectionPath);
 			router.push(`${pathname}?${newUrl.toString()}`);
 		}
 	};
 
-	if (loading) {
-		return <div className="p-8 text-center">Loading document...</div>;
-	}
+	// if (loading) {
+	// 	return <div className="p-8 text-center">Loading document...</div>;
+	// }
 
 	if (!document) {
 		return <div className="p-8 text-center">Document not found</div>;
@@ -266,123 +216,126 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				/>
 
 				{/* Document header - only shown at the document level */}
-					{activePath.length === 2 && (
-						<motion.div
-							key="document-header"
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.3 }}
+				{activePath.length === 2 && (
+					<motion.div
+						key="document-header"
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.3 }}
+					>
+						<motion.h1
+							className="text-3xl font-bold mb-4 text-gray-800"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.1, duration: 0.3 }}
 						>
-							<motion.h1 
-								className="text-3xl font-bold mb-4 text-gray-800"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.1, duration: 0.3 }}
-							>
-								{processTextArray(document.title)}
-							</motion.h1>
+							{processTextArray(document.title)}
+						</motion.h1>
 
-							{document.summary && document.summary.length > 0 && (
-								<motion.p 
+						{/* <motion.p
+							className="text-gray-600 mb-4"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.2, duration: 0.3 }}
+						>
+							{document.summary.join(" ")}
+						</motion.p>
+
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.3, duration: 0.3 }}
+						>
+							<DocumentSummary
+								content={["hello"]}
+								onViewOriginal={() =>
+									setShowFullContent(!showFullContent)
+								}
+								isSimpleView={showFullContent}
+							/>
+						</motion.div> */}
+
+						{/* Bigger gap between main content and section cards */}
+						<div className="mt-12 mb-6"></div>
+					</motion.div>
+				)}
+
+				{/* Section header - shown when viewing a specific section */}
+				{activePath.length > 2 && (
+					<motion.div
+						key={`section-header-${
+							activePath[activePath.length - 1].id
+						}`}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.3 }}
+						className="section-header"
+						id="section-header-container"
+					>
+						<motion.h1
+							className="text-2xl font-bold text-gray-800 mb-4"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.1, duration: 0.3 }}
+						>
+							{activePath[activePath.length - 1].label}
+						</motion.h1>
+
+						{/* {activePath[activePath.length - 1].section?.summary &&
+							(
+								activePath[activePath.length - 1]
+									.section as Section
+							).summary.length > 0 && (
+								<motion.p
 									className="text-gray-600 mb-4"
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									transition={{ delay: 0.2, duration: 0.3 }}
 								>
-									{document.summary.join(" ")}
+									{
+										(
+											activePath[activePath.length - 1]
+												.section as Section
+										).summary
+									}
 								</motion.p>
 							)}
-
-							<motion.div
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.3, duration: 0.3 }}
-							>
-								<DocumentSummary
-									content={document.longSummary}
-									onViewOriginal={() => setShowFullContent(!showFullContent)}
-									isSimpleView={showFullContent}
-								/>
-							</motion.div>
-
-							{/* Bigger gap between main content and section cards */}
-							<div className="mt-12 mb-6"></div>
-						</motion.div>
-					)}
-
-				{/* Section header - shown when viewing a specific section */}
-					{activePath.length > 2 && (
-						<motion.div
-							key={`section-header-${activePath[activePath.length - 1].id}`}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.3 }}
+ */}
+						{/* Wrap DocumentSummary in its own motion.div with proper exit animation */}
+						{/* <motion.div
+							initial={{ opacity: 1 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 1 }}
+							style={{ position: "relative", zIndex: 10 }}
 						>
-							<motion.h1 
-								className="text-2xl font-bold text-gray-800 mb-4"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.1, duration: 0.3 }}
-							>
-								{activePath[activePath.length - 1].label}
-							</motion.h1>
-
-							{activePath[activePath.length - 1].section?.summary &&
-								(
-									activePath[activePath.length - 1]
-										.section as Section
-								).summary.length > 0 && (
-									<motion.p 
-										className="text-gray-600 mb-4"
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										transition={{ delay: 0.2, duration: 0.3 }}
-									>
-										{
-											(
-												activePath[activePath.length - 1]
-													.section as Section
-											).summary
-										}
-									</motion.p>
-								)}
-
-							{activePath[activePath.length - 1].section
-								?.longSummary &&
-								(
-									activePath[activePath.length - 1]
-										.section as Section
-								).longSummary.length > 0 && (
-									<motion.div
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										transition={{ delay: 0.3, duration: 0.3 }}
-									>
-										<DocumentSummary
-											content={
-												(
-													activePath[activePath.length - 1]
-														.section as Section
-												).longSummary
-											}
-											onViewOriginal={() => setShowFullContent(!showFullContent)}
-											isSimpleView={showFullContent}
-										/>
-									</motion.div>
-								)}
-
-							{/* Direct content will be implemented later */}
-
-							{/* Bigger gap between section content and subsection cards */}
-							<div className="mt-12 mb-6"></div>
+							<DocumentSummary
+								content={
+									(
+										activePath[activePath.length - 1]
+											.section as Section
+									)?.longSummary || []
+								}
+								onViewOriginal={() =>
+									setShowFullContent(!showFullContent)
+								}
+								isSimpleView={showFullContent}
+							/>
 						</motion.div>
-					)}
+ */}
+						{/* Direct content will be implemented later */}
+
+						{/* Bigger gap between section content and subsection cards */}
+						<div className="mt-12 mb-6"></div>
+					</motion.div>
+				)}
 
 				{/* Section cards */}
 				{/* Content Display */}
 				{!false ? (
 					<motion.div
-						key={`section-cards-${activePath.map(p => p.id).join('-')}`}
+						key={`section-cards-${activePath
+							.map((p) => p.id)
+							.join("-")}`}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.2, duration: 0.3 }}
@@ -421,7 +374,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				)}
 
 				{/* Show "no contents" message if no sections exist */}
-				{ currentSections.length === 0 && activePath.length > 2 && (
+				{currentSections.length === 0 && activePath.length > 2 && (
 					<p className="text-center text-gray-500 my-8">
 						This section has no subsections.
 					</p>
