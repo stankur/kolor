@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 // import { FullContentView } from "./FullContentView";
-import { Document, Section, fetchDocumentByTitle } from "../utils/supabase";
+import {
+	Document,
+	Section,
+	fetchDocumentByTitle,
+} from "../utils/supabase";
+// import { getMockDocument } from "../utils/supabase";
 import { Breadcrumb } from "./Breadcrumb";
 import { SectionCard } from "./SectionCard";
 import { processTextArray } from "../utils/formatText";
@@ -31,8 +36,8 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	// Load the document and handle URL-based navigation
 	useEffect(() => {
 		const fetchDocument = async () => {
-			// In a real implementation, this would fetch from Supabase
 			const doc = await fetchDocumentByTitle(documentTitle);
+            // const doc = getMockDocument();
 
 			if (doc) {
 				setDocument(doc);
@@ -339,6 +344,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.2, duration: 0.3 }}
+						className="divide-y divide-gray-200"
 					>
 						{currentSections.map((section, index) => (
 							<SectionCard

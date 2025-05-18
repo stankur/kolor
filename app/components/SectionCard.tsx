@@ -10,6 +10,8 @@ interface SectionCardProps {
   section: Section;
   navigateToSection: (section: Section) => void;
   animationDelay?: number;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
 export function SectionCard({ section, navigateToSection, animationDelay = 0 }: SectionCardProps) {
@@ -36,26 +38,20 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
   return (
 		<motion.div
 			layout
-			className={`w-full overflow-hidden mb-6 group ${
-				isExpanded
-					? "bg-white rounded-lg shadow-md border border-gray-200"
-					: ""
-			}`}
+			className="w-full overflow-hidden group"
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3, delay: animationDelay }}
 		>
 			{/* Top section with image, title, and short summary */}
 			<div
-				className={`flex w-full ${isExpanded ? "p-4 pb-2" : ""}`}
+				className="flex w-full py-4"
 				onClick={() => setIsExpanded(!isExpanded)}
 				style={{ cursor: "pointer" }}
 			>
 				{/* Image container */}
 				<div
-					className={`bg-gray-200 w-24 h-24 flex items-center justify-center flex-shrink-0 ${
-						isExpanded ? "rounded-md" : ""
-					}`}
+					className="bg-gray-200 w-24 h-24 flex items-center justify-center flex-shrink-0 rounded-md"
 				>
 					{section.imageUrl ? (
 						<Image
@@ -63,9 +59,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 							alt={processTextArray(section.heading)}
 							width={96}
 							height={96}
-							className={`object-cover w-full h-full saturate-75 ${
-								isExpanded ? "rounded-md" : ""
-							}`}
+							className="object-cover w-full h-full saturate-75 rounded-md"
 						/>
 					) : (
 						<div className="text-4xl text-gray-400">📖</div>
@@ -92,7 +86,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 			</div>
 
 			{/* Bottom section with expandable content and buttons */}
-			<div className={`w-full ${isExpanded ? "px-4 pb-4" : ""}`}>
+			<div className="w-full">
 				<AnimatePresence>
 					{isExpanded && (
 						<motion.div
@@ -103,9 +97,13 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 						>
 							{section.longSummary &&
 								section.longSummary.length > 0 && (
-									<p className="text-gray-700 mt-2 mb-3 break-words">
-										{section.longSummary.join(" ")}
-									</p>
+									<div className="flex flex-col space-y-5 mt-2 mb-3">
+										{section.longSummary.map((paragraph, i) => (
+											<p key={i} className="text-gray-700 break-words">
+												{paragraph}
+											</p>
+										))}
+									</div>
 								)}
 
 							{/* Direct content will be implemented later */}
@@ -159,9 +157,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 
 				{/* Button controls */}
 				<div
-					className={`flex justify-end w-full ${
-						isExpanded ? "" : "pb-4"
-					}`}
+					className="flex justify-end w-full pr-4 pb-4"
 				>
 					<button
 						onClick={(e) => {
