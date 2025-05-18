@@ -16,6 +16,7 @@ interface SectionCardProps {
 
 export function SectionCard({ section, navigateToSection, animationDelay = 0 }: SectionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showSubsections, setShowSubsections] = useState(false);
 //   const [showFullTOC, setShowFullTOC] = useState(false);
 
   const hasChildSections = section.children.some((child) => Array.isArray(child))
@@ -50,9 +51,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 				style={{ cursor: "pointer" }}
 			>
 				{/* Image container */}
-				<div
-					className="bg-gray-200 w-24 h-24 flex items-center justify-center flex-shrink-0 rounded-md"
-				>
+				<div className="bg-gray-200 w-24 h-24 flex items-center justify-center flex-shrink-0 rounded-md">
 					{section.imageUrl ? (
 						<Image
 							src={section.imageUrl}
@@ -97,24 +96,35 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 						>
 							{section.longSummary &&
 								section.longSummary.length > 0 && (
-									<div className="flex flex-col space-y-5 mt-2 mb-3">
-										{section.longSummary.map((paragraph, i) => (
-											<p key={i} className="text-gray-700 break-words">
-												{paragraph}
-											</p>
-										))}
+									<div className="flex flex-col space-y-5 mt-2 mb-2">
+										{section.longSummary.map(
+											(paragraph, i) => (
+												<p
+													key={i}
+													className="text-gray-700 break-words"
+												>
+													{paragraph}
+												</p>
+											)
+										)}
 									</div>
 								)}
 
 							{/* Direct content will be implemented later */}
 
-							{/* Horizontal scrolling section pills */}
+							{/* Subsections */}
 							{hasChildSections && childSections.length > 0 && (
-								<div className="w-full pt-4">
-									<SectionPills
-										sections={childSections}
-										onNavigate={navigateToChildSection}
-									/>
+								<div className="w-full">
+									<AnimatePresence>
+										{showSubsections && (
+											<SectionPills
+												sections={childSections}
+												onNavigate={
+													navigateToChildSection
+												}
+											/>
+										)}
+									</AnimatePresence>
 
 									{/* Toggle button for expanded TOC */}
 									{/* {childSections.length > 0 && (
@@ -156,13 +166,36 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 				</AnimatePresence>
 
 				{/* Button controls */}
-				<div
-					className="flex justify-end w-full pr-4 pb-4"
-				>
+				<div className="flex justify-end items-center w-full pb-4 pt-6 gap-2">
+					<AnimatePresence>
+						{isExpanded &&
+							hasChildSections &&
+							childSections.length > 0 && (
+								<motion.button
+									initial={{ opacity: 0, x: -20 }}
+									animate={{ opacity: 1, x: 0 }}
+									exit={{ opacity: 0, x: -20 }}
+									transition={{ duration: 0.2 }}
+									onClick={(e) => {
+										e.stopPropagation();
+										setShowSubsections(!showSubsections);
+									}}
+									className="flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs mr-auto"
+								>
+									{showSubsections ? "Hide" : "Show"}{" "}
+									{childSections.length} Subsection
+									{childSections.length !== 1 ? "s" : ""}
+								</motion.button>
+							)}
+					</AnimatePresence>
 					<button
 						onClick={(e) => {
 							e.stopPropagation(); // In case of event bubbling
 							setIsExpanded(!isExpanded);
+							// Reset subsections when collapsing
+							if (!isExpanded) {
+								setShowSubsections(false);
+							}
 						}}
 						className="flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center"
 					>

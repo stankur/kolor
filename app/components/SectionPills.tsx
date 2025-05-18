@@ -1,28 +1,51 @@
 import { processTextArray } from "../utils/formatText";
 import { Section } from "../utils/supabase";
+import { motion } from "framer-motion";
 
 interface SectionPillsProps {
 	sections: Section[];
 	onNavigate: (section: Section) => void;
+	showSubsections?: boolean;
 }
 
-export function SectionPills({ sections, onNavigate }: SectionPillsProps) {
+export function SectionPills({ sections, onNavigate, showSubsections = true }: SectionPillsProps) {
+	// Only show the subsections if showSubsections is true
+	if (!showSubsections) return null;
+
 	return (
-		<div className="mt-3 mb-2 w-full overflow-x-auto pb-2">
-			<div className="flex space-x-2 min-w-max">
+		<motion.div 
+			initial={{ opacity: 0, height: 0 }}
+			animate={{ opacity: 1, height: "auto" }}
+			exit={{ opacity: 0, height: 0 }}
+			transition={{ duration: 0.3, ease: "easeInOut" }}
+			className="mt-3 mb-2 w-full overflow-hidden"
+		>
+			<div className="space-y-4 mt-4">
 				{sections.map((section, index) => (
-					<button
+					<motion.div 
 						key={index}
-						onClick={(e) => {
-							e.stopPropagation(); // Prevent triggering the card's onClick
-							onNavigate(section);
-						}}
-						className="flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.2, delay: index * 0.05 }}
+						className="cursor-pointer"
 					>
-						{processTextArray(section.heading)}
-					</button>
+						<h4 
+							className="text-blue-600 text-sm font-semibold hover:underline inline-block"
+							onClick={(e) => {
+								e.stopPropagation();
+								onNavigate(section);
+							}}
+						>
+							{processTextArray(section.heading)}
+						</h4>
+						{section.summary && section.summary.length > 0 && (
+							<p className="text-gray-600 text-xs mt-0.5">
+								{processTextArray(section.summary)}
+							</p>
+						)}
+					</motion.div>
 				))}
 			</div>
-		</div>
+		</motion.div>
 	);
 }
