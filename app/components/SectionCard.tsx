@@ -111,8 +111,8 @@ export function SectionCard({
 			</div>
 
 			{/* Bottom section with expandable content and buttons */}
-			<div className="w-full">
-				<AnimatePresence>
+			<AnimatePresence>
+				<div className={`w-full`}>
 					{isExpanded && !compactMode && (
 						<motion.div
 							initial={{ opacity: 0, height: 0 }}
@@ -153,35 +153,35 @@ export function SectionCard({
 							)}
 						</motion.div>
 					)}
-				</AnimatePresence>
 
-				{/* Button controls that fade in/out rather than appearing/disappearing */}
-				<div
-					className="flex justify-end items-center w-full py-2 gap-2"
-					style={{
-						opacity: compactMode ? 0 : 1,
-						height: compactMode ? 0 : "56px",
-						transform: compactMode ? "scale(0.01)" : "scale(1)",
-						overflow: "hidden",
-						transition:
-							"opacity 0.3s ease, height 0.3s ease, transform 0.3s ease",
-					}}
-				>
-					<button
-						onClick={(e) => {
-							e.stopPropagation(); // In case of event bubbling
-							setIsExpanded(!isExpanded);
-							// Reset subsections when collapsing
-							if (!isExpanded) {
-								setShowSubsections(false);
-							}
+					{/* Button controls that fade in/out rather than appearing/disappearing */}
+					<div
+						className="flex justify-end items-center w-full py-2 gap-2"
+						style={{
+							opacity: compactMode ? 0 : 1,
+							height: compactMode ? 0 : "56px",
+							transform: compactMode ? "scale(0.01)" : "scale(1)",
+							overflow: "hidden",
+							transition:
+								"opacity 0.3s ease, height 0.3s ease, transform 0.3s ease",
 						}}
-						className="flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center"
 					>
-						{isExpanded ? "−" : "+"}
-					</button>
+						<button
+							onClick={(e) => {
+								e.stopPropagation(); // In case of event bubbling
+								setIsExpanded(!isExpanded);
+								// Reset subsections when collapsing
+								if (!isExpanded) {
+									setShowSubsections(false);
+								}
+							}}
+							className="flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center"
+						>
+							{isExpanded ? "−" : "+"}
+						</button>
+					</div>
 				</div>
-			</div>
+			</AnimatePresence>
 		</motion.div>
   );
 }

@@ -1,6 +1,6 @@
 import { DocumentViewer } from './components/DocumentViewer';
 import { Metadata } from 'next';
-
+import { Suspense } from 'react';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -11,8 +11,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DocPage() {
   const decodedTitle = "essays";
-  
+
   return (
-    <DocumentViewer documentTitle={decodedTitle} />
+    <Suspense fallback={<div className="p-8 text-center">Loading document...</div>}>
+      <DocumentViewer documentTitle={decodedTitle} />
+    </Suspense>
   );
 }

@@ -212,28 +212,6 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 							</motion.button>
 						</div>
 
-						{/* <motion.p
-							className="text-gray-600 mb-4"
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{ delay: 0.2, duration: 0.3 }}
-						>
-							{document.summary.join(" ")}
-						</motion.p>
-
-						<motion.div
-							initial={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							transition={{ delay: 0.3, duration: 0.3 }}
-						>
-							<DocumentSummary
-								content={["hello"]}
-								onViewOriginal={() =>
-									setShowFullContent(!showFullContent)
-								}
-								isSimpleView={showFullContent}
-							/>
-						</motion.div> */}
 					</motion.div>
 				)}
 
@@ -280,30 +258,6 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								</motion.p>
 							)}
  */}
-						{/* Wrap DocumentSummary in its own motion.div with proper exit animation */}
-						{/* <motion.div
-							initial={{ opacity: 1 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 1 }}
-							style={{ position: "relative", zIndex: 10 }}
-						>
-							<DocumentSummary
-								content={
-									(
-										activePath[activePath.length - 1]
-											.section as Section
-									)?.longSummary || []
-								}
-								onViewOriginal={() =>
-									setShowFullContent(!showFullContent)
-								}
-								isSimpleView={showFullContent}
-							/>
-						</motion.div>
- */}
-						{/* Direct content will be implemented later */}
-
-						{/* Bigger gap between section content and subsection cards */}
 						<div className="mt-12 mb-6"></div>
 					</motion.div>
 				)}
