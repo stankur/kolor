@@ -12,12 +12,17 @@ interface SectionCardProps {
   animationDelay?: number;
   isFirst?: boolean;
   isLast?: boolean;
+  compactMode?: boolean;
 }
 
-export function SectionCard({ section, navigateToSection, animationDelay = 0 }: SectionCardProps) {
+export function SectionCard({
+  section,
+  navigateToSection,
+  animationDelay = 0,
+  compactMode = false
+}: SectionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showSubsections, setShowSubsections] = useState(false);
-//   const [showFullTOC, setShowFullTOC] = useState(false);
 
   const hasChildSections = section.children.some((child) => Array.isArray(child))
 
@@ -38,40 +43,61 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 
   return (
 		<motion.div
-			layout
 			className="w-full overflow-hidden group"
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.3, delay: animationDelay }}
+			transition={{
+				duration: 0.3,
+				delay: animationDelay,
+			}}
 		>
 			{/* Top section with image, title, and short summary */}
 			<div
-				className="flex w-full py-4"
+				className="flex w-full pt-4"
 				onClick={() => setIsExpanded(!isExpanded)}
 				style={{ cursor: "pointer" }}
 			>
-				{/* Image container */}
-				<div className="bg-gray-200 w-24 h-24 flex items-center justify-center flex-shrink-0 rounded-md">
-					{section.imageUrl ? (
-						<Image
-							src={section.imageUrl}
-							alt={processTextArray(section.heading)}
-							width={96}
-							height={96}
-							className="object-cover w-full h-full saturate-75 rounded-md"
-						/>
-					) : (
-						<div className="text-4xl text-gray-400">📖</div>
-					)}
+				{/* Image container with fixed size but variable opacity and transform */}
+				<div
+					className="relative flex-shrink-0 w-24 h-24 overflow-hidden"
+					style={{
+						transform: compactMode ? "scale(0.01)" : "scale(1)",
+						opacity: compactMode ? 0 : 1,
+						marginRight: compactMode ? 0 : "1rem",
+						width: compactMode ? 0 : "6rem",
+						transition:
+							"transform 0.3s ease, opacity 0.3s ease, margin-right 0.3s ease, width 0.3s ease",
+						position: "relative",
+					}}
+				>
+					<div className="bg-gray-200 absolute inset-0 flex items-center justify-center rounded-md overflow-hidden">
+						{section.imageUrl ? (
+							<Image
+								src={section.imageUrl}
+								alt={processTextArray(section.heading)}
+								width={96}
+								height={96}
+								className="object-cover w-full h-full saturate-75 rounded-md"
+							/>
+						) : (
+							<div className="text-4xl text-gray-400">📖</div>
+						)}
+					</div>
 				</div>
 
 				{/* Title and short summary */}
-				<div className="pl-4 flex-grow overflow-hidden">
+				<div className="flex-grow overflow-hidden">
 					<h3
 						className="text-lg text-blue-600 font-bold mb-1 break-words hover:underline cursor-pointer"
 						onClick={(e) => {
 							e.stopPropagation(); // Prevent expandable click
-							navigateToSection(section);
+							if (section.url) {
+								// Open URL in new tab if available
+								window.open(section.url, "_blank");
+							} else {
+								// Otherwise navigate to section
+								navigateToSection(section);
+							}
 						}}
 					>
 						{processTextArray(section.heading)}
@@ -87,7 +113,7 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 			{/* Bottom section with expandable content and buttons */}
 			<div className="w-full">
 				<AnimatePresence>
-					{isExpanded && (
+					{isExpanded && !compactMode && (
 						<motion.div
 							initial={{ opacity: 0, height: 0 }}
 							animate={{ opacity: 1, height: "auto" }}
@@ -110,8 +136,6 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 									</div>
 								)}
 
-							{/* Direct content will be implemented later */}
-
 							{/* Subsections */}
 							{hasChildSections && childSections.length > 0 && (
 								<div className="w-full">
@@ -125,69 +149,24 @@ export function SectionCard({ section, navigateToSection, animationDelay = 0 }: 
 											/>
 										)}
 									</AnimatePresence>
-
-									{/* Toggle button for expanded TOC */}
-									{/* {childSections.length > 0 && (
-										<button
-											onClick={(e) => {
-												e.stopPropagation(); // Prevent triggering the card's onClick
-												setShowFullTOC(!showFullTOC);
-											}}
-											className="text-blue-500 text-xs hover:text-blue-700 flex items-center mt-1"
-										>
-											{showFullTOC ? (
-												<>
-													<span className="mr-1">
-														▲
-													</span>{" "}
-													Hide detailed contents
-												</>
-											) : (
-												<>
-													<span className="mr-1">
-														▼
-													</span>{" "}
-													Show detailed contents
-												</>
-											)}
-										</button>
-									)} */}
-
-									{/* Expanded Table of Contents (conditional) */}
-									{/* <ExpandableTableOfContents
-										sections={childSections}
-										onNavigate={navigateToChildSection}
-										isVisible={showFullTOC}
-									/> */}
 								</div>
 							)}
 						</motion.div>
 					)}
 				</AnimatePresence>
 
-				{/* Button controls */}
-				<div className="flex justify-end items-center w-full pb-4 pt-6 gap-2">
-					<AnimatePresence>
-						{isExpanded &&
-							hasChildSections &&
-							childSections.length > 0 && (
-								<motion.button
-									initial={{ opacity: 0, x: -20 }}
-									animate={{ opacity: 1, x: 0 }}
-									exit={{ opacity: 0, x: -20 }}
-									transition={{ duration: 0.2 }}
-									onClick={(e) => {
-										e.stopPropagation();
-										setShowSubsections(!showSubsections);
-									}}
-									className="flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs mr-auto"
-								>
-									{showSubsections ? "Hide" : "Show"}{" "}
-									{childSections.length} Subsection
-									{childSections.length !== 1 ? "s" : ""}
-								</motion.button>
-							)}
-					</AnimatePresence>
+				{/* Button controls that fade in/out rather than appearing/disappearing */}
+				<div
+					className="flex justify-end items-center w-full py-2 gap-2"
+					style={{
+						opacity: compactMode ? 0 : 1,
+						height: compactMode ? 0 : "56px",
+						transform: compactMode ? "scale(0.01)" : "scale(1)",
+						overflow: "hidden",
+						transition:
+							"opacity 0.3s ease, height 0.3s ease, transform 0.3s ease",
+					}}
+				>
 					<button
 						onClick={(e) => {
 							e.stopPropagation(); // In case of event bubbling

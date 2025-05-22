@@ -4,13 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 // import { FullContentView } from "./FullContentView";
-import {
-	Document,
-	Section,
-	fetchDocumentByTitle,
-} from "../utils/supabase";
+import { Document, Section, fetchDocumentByTitle } from "../utils/supabase";
 // import { getMockDocument } from "../utils/supabase";
-import { Breadcrumb } from "./Breadcrumb";
 import { SectionCard } from "./SectionCard";
 import { processTextArray } from "../utils/formatText";
 
@@ -28,6 +23,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const [document, setDocument] = useState<Document | null>(null);
 	const [activePath, setActivePath] = useState<BreadcrumbItem[]>([]);
 	const [currentSections, setCurrentSections] = useState<Section[]>([]);
+	const [compactMode, setCompactMode] = useState(false);
 
 	const router = useRouter();
 	const pathname = usePathname();
@@ -36,11 +32,13 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	// Load the document and handle URL-based navigation
 	useEffect(() => {
 		const fetchDocument = async () => {
+            setLoading(true)
 			const doc = await fetchDocumentByTitle(documentTitle);
-            // const doc = getMockDocument();
+			// const doc = getMockDocument();
 
 			if (doc) {
 				setDocument(doc);
+                setLoading(false)
 
 				// Initialize breadcrumb with home and document title
 				const initialPath = [
@@ -114,6 +112,13 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 
 	// Handle navigation through sections
 	const navigateToSection = (section: Section) => {
+		// Check if section has a URL - if so, it's a PG essay
+		if (section.url) {
+			// Open the URL in a new tab
+			window.open(section.url, "_blank");
+			return;
+		}
+
 		// No parent section, proceed as before
 		const newPath = [
 			...activePath,
@@ -152,60 +157,13 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 		router.push(`${pathname}?${newUrl.toString()}`);
 	};
 
-	// Handle breadcrumb navigation
-	const handleBreadcrumbNavigation = (index: number) => {
-		if (index === 0) {
-			// Home navigation - redirect to home page
-			router.push("/");
-			return;
-		}
 
-		// Truncate the path to the selected level
-		const newPath = activePath.slice(0, index + 1);
-		setActivePath(newPath);
+	const [loading, setLoading] = useState(true);
 
-		if (index === 1) {
-			// Document level - show top-level sections
-			if (document) {
-				setCurrentSections(document.children as Section[]);
-			}
-
-			// Clear the section parameter from URL
-			const newUrl = new URLSearchParams(searchParams);
-			newUrl.delete("section");
-			router.push(`${pathname}?${newUrl.toString()}`);
-		} else if (index > 1) {
-			// Section level - show its children if any
-			const section = newPath[index].section;
-			if (
-				section &&
-				Array.isArray(section.children) &&
-				section.children.length > 0 &&
-				typeof section.children[0] !== "string"
-			) {
-				setCurrentSections(
-					section.children
-						.filter((child) => Array.isArray(child))
-						.flat()
-				);
-			} else {
-				setCurrentSections([]);
-			}
-
-			// Update the URL with the section path
-			const sectionPath = newPath
-				.slice(2)
-				.map((item) => item.id)
-				.join("/");
-			const newUrl = new URLSearchParams(searchParams);
-			newUrl.set("section", sectionPath);
-			router.push(`${pathname}?${newUrl.toString()}`);
-		}
-	};
-
-	// if (loading) {
-	// 	return <div className="p-8 text-center">Loading document...</div>;
-	// }
+	// Show loading state while fetching document
+	if (loading) {
+		return <div className="p-8 text-center">Loading document...</div>;
+	}
 
 	if (!document) {
 		return <div className="p-8 text-center">Document not found</div>;
@@ -214,12 +172,6 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	return (
 		<div className="min-h-screen bg-gray-50 p-8">
 			<div className="max-w-4xl mx-auto">
-				{/* Breadcrumb navigation */}
-				<Breadcrumb
-					path={activePath}
-					onNavigate={handleBreadcrumbNavigation}
-				/>
-
 				{/* Document header - only shown at the document level */}
 				{activePath.length === 2 && (
 					<motion.div
@@ -227,15 +179,38 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.3 }}
+						layout
 					>
 						<motion.h1
-							className="text-3xl font-bold mb-4 text-gray-800"
+							className="text-3xl font-bold mb-6 text-gray-800 text-center"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.1, duration: 0.3 }}
+							layout
 						>
 							{processTextArray(document.title)}
 						</motion.h1>
+
+						{/* Display toggle - centered below title */}
+						<div className="flex justify-center mb-8">
+							<motion.button
+								onClick={() => setCompactMode(!compactMode)}
+								className={`flex-shrink-0 w-28 h-8 rounded-full flex items-center justify-center ${
+									compactMode
+										? 'bg-blue-600 text-white'
+										: 'bg-blue-50 hover:bg-blue-100 text-blue-700'
+								}`}
+								whileTap={{ scale: 0.95 }}
+								layout
+								transition={{
+									type: "spring",
+									stiffness: 500,
+									damping: 30
+								}}
+							>
+								Compact
+							</motion.button>
+						</div>
 
 						{/* <motion.p
 							className="text-gray-600 mb-4"
@@ -259,9 +234,6 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								isSimpleView={showFullContent}
 							/>
 						</motion.div> */}
-
-						{/* Bigger gap between main content and section cards */}
-						<div className="mt-12 mb-6"></div>
 					</motion.div>
 				)}
 
@@ -276,12 +248,14 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						transition={{ duration: 0.3 }}
 						className="section-header"
 						id="section-header-container"
+						layout
 					>
 						<motion.h1
 							className="text-2xl font-bold text-gray-800 mb-4"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.1, duration: 0.3 }}
+							layout
 						>
 							{activePath[activePath.length - 1].label}
 						</motion.h1>
@@ -345,6 +319,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.2, duration: 0.3 }}
 						className="divide-y divide-gray-200"
+						layout
 					>
 						{currentSections.map((section, index) => (
 							<SectionCard
@@ -352,6 +327,7 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								section={section}
 								navigateToSection={navigateToSection}
 								animationDelay={index * 0.05}
+								compactMode={compactMode}
 							/>
 						))}
 					</motion.div>
