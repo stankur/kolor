@@ -50,6 +50,7 @@ export function SectionCard({
 				duration: 0.3,
 				delay: animationDelay,
 			}}
+			layout={false} // Disable layout animation
 		>
 			{/* Top section with image, title, and short summary */}
 			<div
@@ -119,6 +120,7 @@ export function SectionCard({
 							animate={{ opacity: 1, height: "auto" }}
 							exit={{ opacity: 0, height: 0 }}
 							className="w-full overflow-hidden mb-2"
+							layout={false} // Disable layout animation
 						>
 							{section.longSummary &&
 								section.longSummary.length > 0 && (

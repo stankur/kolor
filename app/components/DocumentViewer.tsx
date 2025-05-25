@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 // import { FullContentView } from "./FullContentView";
 import { Document, Section, fetchDocumentByTitle } from "../utils/supabase";
 // import { getMockDocument } from "../utils/supabase";
 import { SectionCard } from "./SectionCard";
+import { CategoryTabs } from "./CategoryTabs";
 import { processTextArray } from "../utils/formatText";
 
 interface BreadcrumbItem {
@@ -23,7 +24,9 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const [document, setDocument] = useState<Document | null>(null);
 	const [activePath, setActivePath] = useState<BreadcrumbItem[]>([]);
 	const [currentSections, setCurrentSections] = useState<Section[]>([]);
+	const [filteredSections, setFilteredSections] = useState<Section[]>([]);
 	const [compactMode, setCompactMode] = useState(false);
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
 	const router = useRouter();
 	const pathname = usePathname();
@@ -110,6 +113,25 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 		fetchDocument();
 	}, [documentTitle, searchParams]);
 
+	// Filter sections based on selected category
+	useEffect(() => {
+		if (currentSections.length > 0) {
+			if (selectedCategory === null) {
+				// Show all sections when no category is selected
+				setFilteredSections(currentSections);
+			} else {
+				// Filter sections that have the selected category
+				setFilteredSections(
+					currentSections.filter(section => 
+						section.categories?.includes(selectedCategory)
+					)
+				);
+			}
+		} else {
+            setFilteredSections([]);
+        }
+	}, [currentSections, selectedCategory]);
+
 	// Handle navigation through sections
 	const navigateToSection = (section: Section) => {
 		// Check if section has a URL - if so, it's a PG essay
@@ -160,6 +182,14 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 
 	const [loading, setLoading] = useState(true);
 
+	// State for drawer
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	// Toggle drawer function
+	const toggleDrawer = () => {
+		setDrawerOpen(!drawerOpen);
+	};
+
 	// Show loading state while fetching document
 	if (loading) {
 		return <div className="p-8 text-center">Loading document...</div>;
@@ -171,7 +201,74 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-8">
-			<div className="max-w-4xl mx-auto">
+			<div className="max-w-4xl mx-auto relative">
+				{/* Simple menu icon in top right */}
+				<div className="flex justify-end mb-8">
+					<button
+						onClick={toggleDrawer}
+						className="text-gray-500 hover:text-gray-700 transition-colors"
+						aria-label="Menu"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+							<line x1="3" y1="12" x2="21" y2="12"></line>
+							<line x1="3" y1="6" x2="21" y2="6"></line>
+							<line x1="3" y1="18" x2="21" y2="18"></line>
+						</svg>
+					</button>
+				</div>
+
+				{/* Side drawer */}
+				<AnimatePresence>
+					{drawerOpen && (
+						<>
+							{/* Overlay */}
+							<motion.div
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 0.3 }}
+								exit={{ opacity: 0 }}
+								className="fixed inset-0 bg-black z-20"
+								onClick={toggleDrawer}
+							/>
+
+							{/* Drawer */}
+							<motion.div
+								initial={{ x: "100%" }}
+								animate={{ x: 0 }}
+								exit={{ x: "100%" }}
+								transition={{ type: "spring", stiffness: 300, damping: 30 }}
+								className="fixed right-0 top-0 h-full w-64 bg-white z-30 p-4 shadow-lg"
+							>
+								<div className="flex justify-between items-center mb-6">
+									<h3 className="text-lg font-medium">Settings</h3>
+									<button
+										onClick={toggleDrawer}
+										className="text-gray-400 hover:text-gray-600"
+									>
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+											<line x1="18" y1="6" x2="6" y2="18"></line>
+											<line x1="6" y1="6" x2="18" y2="18"></line>
+										</svg>
+									</button>
+								</div>
+
+								<div className="py-2">
+									<div className="flex items-center justify-between py-3 border-b border-gray-100">
+										<span className="text-sm text-gray-700">Compact Mode</span>
+										<button
+											onClick={() => setCompactMode(!compactMode)}
+											className={`relative inline-flex items-center h-6 rounded-full w-11 ${compactMode ? 'bg-blue-600' : 'bg-gray-200'}`}
+										>
+											<span
+												className={`inline-block w-4 h-4 transform transition bg-white rounded-full ${compactMode ? 'translate-x-6' : 'translate-x-1'}`}
+											/>
+										</button>
+									</div>
+								</div>
+							</motion.div>
+						</>
+					)}
+				</AnimatePresence>
+
 				{/* Document header - only shown at the document level */}
 				{activePath.length === 2 && (
 					<motion.div
@@ -179,39 +276,22 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.3 }}
-						layout
+						layout={false}
 					>
 						<motion.h1
-							className="text-3xl font-bold mb-6 text-gray-800 text-center"
+							className="text-3xl font-bold mb-14 text-gray-800 text-center"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.1, duration: 0.3 }}
-							layout
+							layout={false}
 						>
 							{processTextArray(document.title)}
 						</motion.h1>
-
-						{/* Display toggle - centered below title */}
-						<div className="flex justify-center mb-8">
-							<motion.button
-								onClick={() => setCompactMode(!compactMode)}
-								className={`flex-shrink-0 w-28 h-8 rounded-full flex items-center justify-center ${
-									compactMode
-										? 'bg-blue-600 text-white'
-										: 'bg-blue-50 hover:bg-blue-100 text-blue-700'
-								}`}
-								whileTap={{ scale: 0.95 }}
-								layout
-								transition={{
-									type: "spring",
-									stiffness: 500,
-									damping: 30
-								}}
-							>
-								Compact
-							</motion.button>
-						</div>
-
+						{/* Category tabs */}
+						<CategoryTabs
+							selectedCategory={selectedCategory}
+							onSelectCategory={setSelectedCategory}
+						/>
 					</motion.div>
 				)}
 
@@ -226,38 +306,18 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						transition={{ duration: 0.3 }}
 						className="section-header"
 						id="section-header-container"
-						layout
+						layout={false}
 					>
 						<motion.h1
 							className="text-2xl font-bold text-gray-800 mb-4"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.1, duration: 0.3 }}
-							layout
+							layout={false}
 						>
 							{activePath[activePath.length - 1].label}
 						</motion.h1>
 
-						{/* {activePath[activePath.length - 1].section?.summary &&
-							(
-								activePath[activePath.length - 1]
-									.section as Section
-							).summary.length > 0 && (
-								<motion.p
-									className="text-gray-600 mb-4"
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									transition={{ delay: 0.2, duration: 0.3 }}
-								>
-									{
-										(
-											activePath[activePath.length - 1]
-												.section as Section
-										).summary
-									}
-								</motion.p>
-							)}
- */}
 						<div className="mt-12 mb-6"></div>
 					</motion.div>
 				)}
@@ -268,16 +328,19 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 					<motion.div
 						key={`section-cards-${activePath
 							.map((p) => p.id)
-							.join("-")}`}
+							.join("-")}-${selectedCategory || "all"}`}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.2, duration: 0.3 }}
 						className="divide-y divide-gray-200"
-						layout
+						layout={false}
 					>
-						{currentSections.map((section, index) => (
+						{/* Use filteredSections instead of currentSections */}
+						{filteredSections.map((section, index) => (
 							<SectionCard
-								key={section.heading.join("")}
+								key={`${section.heading.join("")}-${
+									selectedCategory || "all"
+								}-${index}`}
 								section={section}
 								navigateToSection={navigateToSection}
 								animationDelay={index * 0.05}
@@ -292,29 +355,27 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						animate={{ opacity: 1 }}
 						transition={{ duration: 0.3 }}
 						className="prose prose-lg max-w-none"
+						layout={false}
 					>
-						{/* {activePath.length === 2 && document ? (
-							<FullContentView 
-								section={document as unknown as Section}
-								showTitle={false}
-							/>
-						) : activePath.length > 2 && activePath[activePath.length - 1].section ? (
-							<FullContentView 
-								section={activePath[activePath.length - 1].section as Section}
-								showTitle={false}
-							/>
-						) : (
-							<p>No content available</p>
-						)} */}
+						{/* Full content view code removed for brevity */}
 					</motion.div>
 				)}
 
 				{/* Show "no contents" message if no sections exist */}
-				{currentSections.length === 0 && activePath.length > 2 && (
+				{filteredSections.length === 0 && activePath.length > 2 && (
 					<p className="text-center text-gray-500 my-8">
 						This section has no subsections.
 					</p>
 				)}
+
+				{/* Show "no results" message when filtering returns no results */}
+				{filteredSections.length === 0 &&
+					currentSections.length > 0 &&
+					selectedCategory !== null && (
+						<p className="text-center text-gray-500 my-8">
+							No essays found in the category.
+						</p>
+					)}
 			</div>
 		</div>
 	);

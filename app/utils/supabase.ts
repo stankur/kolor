@@ -20,6 +20,7 @@ export interface Section {
 	imageUrl?: string;
 	parentSection?: Section;
 	url?: string; // Added for PG essays
+	categories?: string[]; // Added for category filtering
 }
 
 export type SectionContainer = Section[];
@@ -37,6 +38,7 @@ export interface PGEssay {
     longSummary: string[];
     url: string;
     imageUrl: string;
+    categories?: string[];
 }
 
 export type PGProject = PGEssay[];
@@ -69,6 +71,7 @@ export async function fetchDocumentByTitle(
 					longSummary: essay.longSummary,
 					imageUrl: essay.imageUrl,
 					url: essay.url,
+					categories: essay.categories,
 					children: [] // No subsections
 				})).toReversed()
 			};
@@ -82,5 +85,3 @@ export async function fetchDocumentByTitle(
 		return null;
 	}
 }
-
-
