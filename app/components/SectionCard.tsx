@@ -106,7 +106,7 @@ export function SectionCard({
 				{/* Title and short summary */}
 				<div className="flex-grow overflow-hidden">
 					<h3
-						className="text-lg text-gray-600 font-bold mb-1 break-words hover:underline cursor-pointer"
+						className="text-lg text-blue-600 font-bold mb-1 break-words hover:underline cursor-pointer"
 						onClick={(e) => {
 							e.stopPropagation(); // Prevent expandable click
 							if (section.url) {
