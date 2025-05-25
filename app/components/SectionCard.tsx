@@ -141,7 +141,7 @@ export function SectionCard({
 						>
 							{section.longSummary &&
 								section.longSummary.length > 0 && (
-									<div className="flex flex-col space-y-5 mt-2 mb-2">
+									<div className="flex flex-col space-y-5 mt-6 mb-2">
 										{section.longSummary.map(
 											(paragraph, i) => (
 												<p

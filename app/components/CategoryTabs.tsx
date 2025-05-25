@@ -58,7 +58,7 @@ export function CategoryTabs({
 						onClick={() => onSelectCategory(category)}
 						className={`px-3 py-1 rounded-md text-sm ${
 							selectedCategory === category
-								? "text-gray-600 font-medium"
+								? "text-blue-600 font-medium"
 								: "text-gray-500 hover:text-gray-600"
 						}`}
 						whileTap={{ scale: 0.95 }}
