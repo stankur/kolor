@@ -26,7 +26,11 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	const [currentSections, setCurrentSections] = useState<Section[]>([]);
 	const [filteredSections, setFilteredSections] = useState<Section[]>([]);
 	const [compactMode, setCompactMode] = useState(false);
-	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(
+		null
+	);
+	const [showingBookmarks, setShowingBookmarks] = useState(false);
+	const [bookmarkedSections, setBookmarkedSections] = useState<Section[]>([]);
 
 	const router = useRouter();
 	const pathname = usePathname();
@@ -35,13 +39,13 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	// Load the document and handle URL-based navigation
 	useEffect(() => {
 		const fetchDocument = async () => {
-            setLoading(true)
+			setLoading(true);
 			const doc = await fetchDocumentByTitle(documentTitle);
 			// const doc = getMockDocument();
 
 			if (doc) {
 				setDocument(doc);
-                setLoading(false)
+				setLoading(false);
 
 				// Initialize breadcrumb with home and document title
 				const initialPath = [
@@ -113,24 +117,70 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 		fetchDocument();
 	}, [documentTitle, searchParams]);
 
-	// Filter sections based on selected category
+	// Load bookmarked sections from localStorage
 	useEffect(() => {
-		if (currentSections.length > 0) {
+		const loadBookmarks = () => {
+			if (typeof window !== "undefined") {
+				const bookmarksString = localStorage.getItem("bookmarks");
+				if (bookmarksString) {
+					try {
+						const bookmarks = JSON.parse(bookmarksString);
+						setBookmarkedSections(bookmarks);
+					} catch (error) {
+						console.error(
+							"Error loading bookmarks from localStorage:",
+							error
+						);
+						setBookmarkedSections([]);
+					}
+				} else {
+					setBookmarkedSections([]);
+				}
+			}
+		};
+
+		// Load bookmarks on initial render and when showingBookmarks changes
+		loadBookmarks();
+
+		// Also set up an event listener for storage changes
+		const handleStorageChange = (e: StorageEvent) => {
+			if (e.key === "bookmarks") {
+				loadBookmarks();
+			}
+		};
+
+		window.addEventListener("storage", handleStorageChange);
+		return () => {
+			window.removeEventListener("storage", handleStorageChange);
+		};
+	}, [showingBookmarks]);
+
+	// Filter sections based on selected category or show bookmarks
+	useEffect(() => {
+		if (showingBookmarks) {
+			// When in bookmarks view, show bookmarked sections
+			setFilteredSections(bookmarkedSections);
+		} else if (currentSections.length > 0) {
 			if (selectedCategory === null) {
 				// Show all sections when no category is selected
 				setFilteredSections(currentSections);
 			} else {
 				// Filter sections that have the selected category
 				setFilteredSections(
-					currentSections.filter(section => 
+					currentSections.filter((section) =>
 						section.categories?.includes(selectedCategory)
 					)
 				);
 			}
 		} else {
-            setFilteredSections([]);
-        }
-	}, [currentSections, selectedCategory]);
+			setFilteredSections([]);
+		}
+	}, [
+		currentSections,
+		selectedCategory,
+		showingBookmarks,
+		bookmarkedSections,
+	]);
 
 	// Handle navigation through sections
 	const navigateToSection = (section: Section) => {
@@ -179,7 +229,6 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 		router.push(`${pathname}?${newUrl.toString()}`);
 	};
 
-
 	const [loading, setLoading] = useState(true);
 
 	// State for drawer
@@ -202,14 +251,94 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 	return (
 		<div className="min-h-screen bg-gray-50 p-8">
 			<div className="max-w-4xl mx-auto relative">
-				{/* Simple menu icon in top right */}
-				<div className="flex justify-end mb-8">
+				{/* Top navigation row with home, bookmarks, and menu */}
+				<div className="flex justify-between items-center mb-8">
+					<div className="flex space-x-4">
+						{/* Home button */}
+						<button
+							onClick={() => {
+								// Reset to home view
+								setShowingBookmarks(false);
+								router.push(pathname);
+							}}
+							className="text-gray-500 hover:text-gray-400 transition-colors"
+							aria-label="Home"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+								<polyline points="9 22 9 12 15 12 15 22"></polyline>
+							</svg>
+						</button>
+
+						{/* Bookmarks button */}
+						<button
+							onClick={() => {
+								// Toggle bookmarks view
+								setShowingBookmarks(!showingBookmarks);
+
+								if (!showingBookmarks) {
+									// When entering bookmarks view, update the active path
+									setActivePath([
+										{ id: "home", label: "Home" },
+										{ id: "bookmarks", label: "Bookmarks" },
+									]);
+								} else {
+									// When leaving bookmarks view, go back to document
+									router.push(pathname);
+								}
+							}}
+							className={`${
+								showingBookmarks
+									? "text-gray-600"
+									: "text-gray-500 hover:text-gray-600"
+							} transition-colors`}
+							aria-label="Bookmarks"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill={
+									showingBookmarks ? "currentColor" : "none"
+								}
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+							</svg>
+						</button>
+					</div>
+
+					{/* Settings menu button */}
 					<button
 						onClick={toggleDrawer}
-						className="text-gray-500 hover:text-gray-700 transition-colors"
+						className="text-gray-500 hover:text-gray-400 transition-colors"
 						aria-label="Menu"
 					>
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						>
 							<line x1="3" y1="12" x2="21" y2="12"></line>
 							<line x1="3" y1="6" x2="21" y2="6"></line>
 							<line x1="3" y1="18" x2="21" y2="18"></line>
@@ -235,31 +364,69 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 								initial={{ x: "100%" }}
 								animate={{ x: 0 }}
 								exit={{ x: "100%" }}
-								transition={{ type: "spring", stiffness: 300, damping: 30 }}
+								transition={{
+									type: "spring",
+									stiffness: 300,
+									damping: 30,
+								}}
 								className="fixed right-0 top-0 h-full w-64 bg-white z-30 p-4 shadow-lg"
 							>
 								<div className="flex justify-between items-center mb-6">
-									<h3 className="text-lg font-medium">Settings</h3>
+									<h3 className="text-lg text-gray-800 font-medium">
+										Settings
+									</h3>
 									<button
 										onClick={toggleDrawer}
 										className="text-gray-400 hover:text-gray-600"
 									>
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-											<line x1="18" y1="6" x2="6" y2="18"></line>
-											<line x1="6" y1="6" x2="18" y2="18"></line>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width="20"
+											height="20"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										>
+											<line
+												x1="18"
+												y1="6"
+												x2="6"
+												y2="18"
+											></line>
+											<line
+												x1="6"
+												y1="6"
+												x2="18"
+												y2="18"
+											></line>
 										</svg>
 									</button>
 								</div>
 
 								<div className="py-2">
 									<div className="flex items-center justify-between py-3 border-b border-gray-100">
-										<span className="text-sm text-gray-700">Compact Mode</span>
+										<span className="text-sm text-gray-600">
+											Compact Mode
+										</span>
 										<button
-											onClick={() => setCompactMode(!compactMode)}
-											className={`relative inline-flex items-center h-6 rounded-full w-11 ${compactMode ? 'bg-blue-600' : 'bg-gray-200'}`}
+											onClick={() =>
+												setCompactMode(!compactMode)
+											}
+											className={`relative inline-flex items-center h-6 rounded-full w-11 ${
+												compactMode
+													? "bg-blue-600"
+													: "bg-gray-200"
+											}`}
 										>
 											<span
-												className={`inline-block w-4 h-4 transform transition bg-white rounded-full ${compactMode ? 'translate-x-6' : 'translate-x-1'}`}
+												className={`inline-block w-4 h-4 transform transition bg-white rounded-full ${
+													compactMode
+														? "translate-x-6"
+														: "translate-x-1"
+												}`}
 											/>
 										</button>
 									</div>
@@ -269,8 +436,8 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 					)}
 				</AnimatePresence>
 
-				{/* Document header - only shown at the document level */}
-				{activePath.length === 2 && (
+				{/* Document header - only shown at the document level and not in bookmarks view */}
+				{activePath.length === 2 && !showingBookmarks && (
 					<motion.div
 						key="document-header"
 						initial={{ opacity: 0, y: 20 }}
@@ -291,12 +458,34 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 						<CategoryTabs
 							selectedCategory={selectedCategory}
 							onSelectCategory={setSelectedCategory}
+							categoryItems={filteredSections.length}
 						/>
 					</motion.div>
 				)}
 
+				{/* Bookmarks header - shown when viewing bookmarks */}
+				{showingBookmarks && (
+					<motion.div
+						key="bookmarks-header"
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.3 }}
+						layout={false}
+					>
+						<motion.h1
+							className="text-3xl font-bold mb-14 text-gray-800 text-center"
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.1, duration: 0.3 }}
+							layout={false}
+						>
+							Bookmarks
+						</motion.h1>
+					</motion.div>
+				)}
+
 				{/* Section header - shown when viewing a specific section */}
-				{activePath.length > 2 && (
+				{activePath.length > 2 && !showingBookmarks && (
 					<motion.div
 						key={`section-header-${
 							activePath[activePath.length - 1].id
@@ -326,9 +515,11 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				{/* Content Display */}
 				{!false ? (
 					<motion.div
-						key={`section-cards-${activePath
-							.map((p) => p.id)
-							.join("-")}-${selectedCategory || "all"}`}
+						key={`section-cards-${
+							showingBookmarks
+								? "bookmarks"
+								: activePath.map((p) => p.id).join("-")
+						}-${selectedCategory || "all"}`}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.2, duration: 0.3 }}
@@ -362,20 +553,31 @@ export function DocumentViewer({ documentTitle }: DocumentViewerProps) {
 				)}
 
 				{/* Show "no contents" message if no sections exist */}
-				{filteredSections.length === 0 && activePath.length > 2 && (
-					<p className="text-center text-gray-500 my-8">
-						This section has no subsections.
-					</p>
-				)}
+				{filteredSections.length === 0 &&
+					activePath.length > 2 &&
+					!showingBookmarks && (
+						<p className="text-center text-gray-500 my-8">
+							This section has no subsections.
+						</p>
+					)}
 
 				{/* Show "no results" message when filtering returns no results */}
 				{filteredSections.length === 0 &&
 					currentSections.length > 0 &&
-					selectedCategory !== null && (
+					selectedCategory !== null &&
+					!showingBookmarks && (
 						<p className="text-center text-gray-500 my-8">
 							No essays found in the category.
 						</p>
 					)}
+
+				{/* Show "no bookmarks" message when no bookmarks exist */}
+				{filteredSections.length === 0 && showingBookmarks && (
+					<p className="text-center text-gray-500 my-8">
+						You have no bookmarks yet. Click the bookmark icon on
+						any section to add it to your bookmarks.
+					</p>
+				)}
 			</div>
 		</div>
 	);

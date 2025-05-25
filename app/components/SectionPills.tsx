@@ -30,7 +30,7 @@ export function SectionPills({ sections, onNavigate, showSubsections = true }: S
 						className="cursor-pointer"
 					>
 						<h4 
-							className="text-blue-600 text-sm font-semibold hover:underline inline-block"
+							className="text-gray-600 text-sm font-semibold hover:underline inline-block"
 							onClick={(e) => {
 								e.stopPropagation();
 								onNavigate(section);

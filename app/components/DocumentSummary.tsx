@@ -1,20 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DocumentSummaryProps {
-  content: string[];
-  onViewOriginal?: () => void;
-  isSimpleView?: boolean;
+	content: string[];
+	onViewOriginal?: () => void;
+	isSimpleView?: boolean;
 }
 
-export function DocumentSummary({ content, onViewOriginal, isSimpleView }: DocumentSummaryProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
-  if (!content || content.length === 0) return <div>yo</div>;
-  
-  return (
+export function DocumentSummary({
+	content,
+	onViewOriginal,
+	isSimpleView,
+}: DocumentSummaryProps) {
+	const [isExpanded, setIsExpanded] = useState(false);
+
+	if (!content || content.length === 0) return <div>yo</div>;
+
+	return (
 		<div
 			className={`mb-24 ${
 				isExpanded
@@ -29,7 +33,7 @@ export function DocumentSummary({ content, onViewOriginal, isSimpleView }: Docum
 						initial={{ opacity: 0, height: 0 }}
 						animate={{ opacity: 1, height: "auto" }}
 						exit={{ opacity: 0, height: 0 }}
-						className="text-gray-700 mb-2"
+						className="text-gray-600 mb-2"
 					>
 						{content.map((paragraph) => (
 							<p key={paragraph} className="mb-2">
@@ -43,7 +47,7 @@ export function DocumentSummary({ content, onViewOriginal, isSimpleView }: Docum
 			<div className="flex justify-end gap-3 mt-2">
 				<button
 					onClick={() => setIsExpanded(!isExpanded)}
-					className="flex items-center gap-2 h-8 flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
+					className="flex items-center gap-2 h-8 flex-shrink-0  hover:bg-blue-100 text-gray-600 px-3 py-1 rounded-full text-sm whitespace-nowrap"
 				>
 					<span>{isExpanded ? "Hide" : "Longer"}</span>
 				</button>
@@ -51,12 +55,12 @@ export function DocumentSummary({ content, onViewOriginal, isSimpleView }: Docum
 				{onViewOriginal && (
 					<button
 						onClick={onViewOriginal}
-						className="flex items-center h-8 gap-2 flex-shrink-0 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm whitespace-nowrap"
+						className="flex items-center h-8 gap-2 flex-shrink-0  hover:bg-blue-100 text-gray-600 px-3 py-1 rounded-full text-sm whitespace-nowrap"
 					>
-						<span>{isSimpleView ? 'Simple' : 'Original'}</span>
+						<span>{isSimpleView ? "Simple" : "Original"}</span>
 					</button>
 				)}
 			</div>
 		</div>
-  );
+	);
 }

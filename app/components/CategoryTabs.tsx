@@ -27,11 +27,13 @@ export const CATEGORY_DESCRIPTIONS = [
 interface CategoryTabsProps {
 	selectedCategory: string | null;
 	onSelectCategory: (category: string | null) => void;
+	categoryItems: number;
 }
 
 export function CategoryTabs({
 	selectedCategory,
 	onSelectCategory,
+	categoryItems,
 }: CategoryTabsProps) {
 	return (
 		<div className="flex flex-col items-center w-full mb-14">
@@ -41,8 +43,8 @@ export function CategoryTabs({
 					onClick={() => onSelectCategory(null)}
 					className={`px-3 py-1 rounded-md text-sm ${
 						selectedCategory === null
-							? "text-blue-600 font-medium"
-							: "text-gray-500 hover:text-gray-700"
+							? "text-gray-600 font-medium"
+							: "text-gray-500 hover:text-gray-600"
 					}`}
 					whileTap={{ scale: 0.95 }}
 				>
@@ -56,8 +58,8 @@ export function CategoryTabs({
 						onClick={() => onSelectCategory(category)}
 						className={`px-3 py-1 rounded-md text-sm ${
 							selectedCategory === category
-								? "text-blue-600 font-medium"
-								: "text-gray-500 hover:text-gray-700"
+								? "text-gray-600 font-medium"
+								: "text-gray-500 hover:text-gray-600"
 						}`}
 						whileTap={{ scale: 0.95 }}
 					>
@@ -80,14 +82,19 @@ export function CategoryTabs({
 				{selectedCategory && (
 					<motion.div
 						key={selectedCategory}
-						className="max-w-xl mx-auto px-6 py-2"
+						className="max-w-xl mx-auto px-6 py-2 flex flex-col gap-6"
 						initial={{ opacity: 0, y: 5 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 5 }}
 						transition={{ duration: 0.2 }}
 					>
 						<p className="text-gray-600 italic text-sm text-center leading-relaxed">
-							{CATEGORY_DESCRIPTIONS[CATEGORIES.indexOf(selectedCategory)]}
+							{
+								CATEGORY_DESCRIPTIONS[
+									CATEGORIES.indexOf(selectedCategory)
+								]
+							}
+							{" -"}&nbsp;{categoryItems}&nbsp;essays
 						</p>
 					</motion.div>
 				)}
