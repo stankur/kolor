@@ -21,6 +21,14 @@ export interface Section {
 	parentSection?: Section;
 	url?: string; // Added for PG essays
 	categories?: string[]; // Added for category filtering
+	recommendations?: Recommendation[];
+}
+
+export interface Recommendation {
+	personName: string;
+	company: string;
+	squareImage: string;
+	source: string;
 }
 
 export type SectionContainer = Section[];
@@ -30,6 +38,7 @@ export interface Document {
 	summary: string[];
 	longSummary: string[];
 	children: SectionContainer;
+    recommendations?: Recommendation[]; // Added for recommendations
 }
 
 export interface PGEssay {
@@ -39,6 +48,7 @@ export interface PGEssay {
     url: string;
     imageUrl: string;
     categories?: string[];
+    recommendations?: Recommendation[];
 }
 
 export type PGProject = PGEssay[];
@@ -72,8 +82,9 @@ export async function fetchDocumentByTitle(
 					imageUrl: essay.imageUrl,
 					url: essay.url,
 					categories: essay.categories,
-					children: [] // No subsections
-				})).toReversed()
+					children: [], // No subsections
+                    recommendations: essay.recommendations, // No recommendations for essays
+				})).toReversed(),
 			};
 
 			return document;

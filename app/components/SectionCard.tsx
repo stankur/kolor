@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Section } from "../utils/supabase";
-// import { ExpandableTableOfContents } from './ExpandableTableOfContents';
 import Image from "next/image";
 import { processTextArray } from "../utils/formatText";
 
@@ -155,6 +154,44 @@ export function SectionCard({
 									</div>
 								)}
 
+							{/* Recommendations */}
+							{section.recommendations && section.recommendations.length > 0 && (
+								<div className="mt-6 mb-4 border-gray-200 pt-4">
+									<h4 className="text-xs font-semibold text-gray-600 mb-3">Recommended by:</h4>
+									<div className="flex flex-wrap gap-3">
+										{section.recommendations.map((rec, index) => (
+											<div key={index} className="flex items-center p-2 bg-gray-50 rounded-lg">
+												{rec.squareImage && (
+													<div className="relative w-10 h-10 rounded-full overflow-hidden mr-2">
+														<Image 
+															src={rec.squareImage}
+															alt={rec.personName}
+															width={40}
+															height={40}
+															className="object-cover"
+														/>
+													</div>
+												)}
+												<div>
+													<a 
+														href={rec.source} 
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-sm font-medium text-blue-600 hover:underline"
+														onClick={(e) => e.stopPropagation()}
+													>
+														{rec.personName}
+													</a>
+													{rec.company && (
+														<p className="text-xs text-gray-500">{rec.company}</p>
+													)}
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
+
 							{/* Subsections */}
 						</motion.div>
 					)}
@@ -171,6 +208,19 @@ export function SectionCard({
 								"opacity 0.3s ease, height 0.3s ease, transform 0.3s ease",
 						}}
 					>
+						{/* Founders recommended badge */}
+						{section.recommendations && section.recommendations.length > 0 && (
+							<span 
+								className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 shadow-2xs text-blue-600 cursor-pointer mr-auto"
+								onClick={(e) => {
+									e.stopPropagation();
+									setIsExpanded(!isExpanded);
+								}}
+							>
+								Founders recommended
+							</span>
+						)}
+						
 						{/* Bookmark button */}
 						<button
 							onClick={(e) => {
@@ -211,6 +261,7 @@ export function SectionCard({
 												imageUrl: section.imageUrl,
 												url: section.url,
 												categories: section.categories,
+												recommendations: section.recommendations
 											});
 										}
 									} else {
@@ -233,7 +284,7 @@ export function SectionCard({
 									);
 								}
 							}}
-							className="flex-shrink-0  hover:bg-blue-100 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center"
+							className="flex-shrink-0 hover:bg-blue-100 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center"
 							aria-label={
 								isBookmarked
 									? "Remove from bookmarks"
@@ -262,7 +313,7 @@ export function SectionCard({
 								setIsExpanded(!isExpanded);
 								// Reset subsections when collapsing
 							}}
-							className="flex-shrink-0  hover:bg-blue-100 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center"
+							className="flex-shrink-0 hover:bg-blue-100 text-gray-400 w-8 h-8 rounded-full flex items-center justify-center"
 						>
 							{isExpanded ? "−" : "+"}
 						</button>
